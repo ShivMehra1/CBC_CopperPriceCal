@@ -12,7 +12,7 @@ The quote math lives in the script at the bottom of `index.html`. The `RATES` bl
     vendor/react-dom.production.min.js React DOM 18.3.1
     api/copper.js                      Live COMEX copper price
     api/fx.js                          Live USD to CAD rate
-    api/history.js                     Daily COMEX closes for the last 3 months
+    api/history.js                     Daily COMEX bars for the past year
     vercel.json                        Vercel configuration
     package.json                       Pins the Vercel runtime to Node 24
 
@@ -22,7 +22,7 @@ Pushes to `main` on https://github.com/ShivMehra1/CBC_CopperPriceCal deploy this
 
 `api/copper.js` reads the live copper price from comexlive.org/copper/, then falls back to the COMEX front-month futures quote (HG=F). The page also tries those public feeds directly. Both the COMEX and FX fields stay editable, so a quote can still be finished by hand.
 
-`api/history.js` loads about three months of daily HG=F closes for the chart. It reports the change from the first close in that window to the latest close.
+`api/history.js` loads a year of daily HG=F bars for the chart under the quote. The page can filter that year to 1 month, 3 months, 6 months, or the full year, and read open, high, low, and close for any session. `?range=1y` is the default. `1mo`, `3mo`, `6mo`, and `2y` are also accepted.
 
 Open these after a deploy:
 
