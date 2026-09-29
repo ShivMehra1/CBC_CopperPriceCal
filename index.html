@@ -64,6 +64,14 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
   .page-shell{padding:18px 14px 40px !important}
   .chart-card{padding:16px 14px 14px !important}
   .tool-grid{grid-template-columns:1fr !important}
+  .site-header{gap:10px !important;padding:12px 14px !important}
+  .site-title{flex:1 1 120px !important;min-width:0 !important}
+  .site-title h1{font-size:18px !important}
+  .site-ticker{flex:1 1 100% !important;margin-left:0 !important}
+  .tool-grid > *{min-width:0 !important}
+  .opt-grid{grid-template-columns:1fr !important}
+  .price-card{order:-1}
+  .price-head{flex-wrap:wrap !important}
 }
 </style>
 </helmet>
@@ -78,14 +86,14 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
 
   <div class="page-shell" style="position:relative;max-width:1560px;margin:0 auto;padding:26px 34px 56px">
 
-    <header style="position:sticky;top:14px;z-index:30;display:flex;align-items:center;gap:26px;flex-wrap:wrap;padding:16px 22px;border-radius:20px;background:linear-gradient(158deg,rgba(255,255,255,.95),rgba(255,255,255,.82));backdrop-filter:blur(26px) saturate(180%);-webkit-backdrop-filter:blur(26px) saturate(180%);border:1px solid rgba(255,255,255,.95);box-shadow:0 26px 58px -30px rgba(15,31,44,.24),inset 0 1px 0 #FFFFFF">
+    <header class="site-header" style="position:sticky;top:14px;z-index:30;display:flex;align-items:center;gap:26px;flex-wrap:wrap;padding:16px 22px;border-radius:20px;background:linear-gradient(158deg,rgba(255,255,255,.95),rgba(255,255,255,.82));backdrop-filter:blur(26px) saturate(180%);-webkit-backdrop-filter:blur(26px) saturate(180%);border:1px solid rgba(255,255,255,.95);box-shadow:0 26px 58px -30px rgba(15,31,44,.24),inset 0 1px 0 #FFFFFF">
       <img src="/assets/logo.png" alt="CBC Specialty Metals" style="height:40px;width:auto;display:block;flex:none">
       <div style="width:1px;height:44px;background:linear-gradient(180deg,transparent,rgba(15,31,44,.16),transparent)"></div>
-      <div style="display:flex;flex-direction:column;gap:4px;margin-right:auto;flex:1 1 190px;min-width:0">
+      <div class="site-title" style="display:flex;flex-direction:column;gap:4px;margin-right:auto;flex:1 1 190px;min-width:0">
         <h1 style="margin:0;font-family:'Doppio One',sans-serif;font-size:21px;line-height:1.1;font-weight:400;color:#0F1F2C">Roofing copper prices</h1>
       </div>
 
-      <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-left:auto">
+      <div class="site-ticker" style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-left:auto">
       <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:13px;background:rgba(255,255,255,.78);border:1px solid rgba(15,31,44,.1)">
         <span style="width:7px;height:7px;border-radius:50%;background:{{ statusDot }};box-shadow:0 0 9px {{ statusDot }};animation:pulseDot 1.9s ease-in-out infinite;flex:none"></span>
         <div style="display:flex;flex-direction:column;gap:3px;white-space:nowrap">
@@ -106,7 +114,7 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
             <h2 style="margin:0;font-family:'Doppio One',sans-serif;font-size:15px;font-weight:400;letter-spacing:.05em;color:#0F1F2C">Material Details</h2>
           </div>
 
-          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(184px,1fr));gap:20px 18px;align-content:start">
+          <div class="opt-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(184px,1fr));gap:20px 18px;align-content:start">
           <div>
             <div style="font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:rgba(15,31,44,.68);margin-bottom:10px">Select Customer Currency</div>
             <div style="display:flex;flex-wrap:wrap;gap:8px">
@@ -197,7 +205,7 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
 
           <div>
             <div style="font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:rgba(15,31,44,.68);margin-bottom:10px">Select Material Length</div>
-            <div style="display:flex;flex-wrap:wrap;gap:8px">
+            <div style="{{ lengthWrapStyle }}">
               <sc-for list="{{ lengthOpts }}" as="o" hint-placeholder-count="3">
                 <sc-if value="{{ o.on }}" hint-placeholder-val="{{ false }}">
                   <button sc-camel-on-click="{{ o.pick }}" style="padding:10px 14px;border-radius:12px;border:1px solid rgba(154,78,48,.95);background:linear-gradient(150deg,#B4613F,#9A4E30);color:#FFFFFF;font-size:13px;font-weight:600;cursor:pointer;box-shadow:0 10px 22px -10px rgba(167,88,57,.75),inset 0 1px 0 rgba(255,255,255,.28);transition:transform .1s ease" style-active="transform:scale(.94)">{{ o.label }}</button>
@@ -207,6 +215,9 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
                 </sc-if>
               </sc-for>
             </div>
+            <sc-if value="{{ lengthForSheetOnly }}" hint-placeholder-val="{{ false }}">
+              <div style="margin-top:8px;font-size:11.5px;font-weight:500;color:rgba(15,31,44,.55)">Length applies to sheet</div>
+            </sc-if>
           </div>
         </section>
 
@@ -219,7 +230,7 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
           <div>
             <div style="font-size:11.5px;font-weight:500;color:rgba(15,31,44,.68);margin-bottom:9px">Provided by AP via email</div>
             <div style="display:flex;align-items:center;gap:10px;margin-bottom:9px;flex-wrap:wrap">
-              <span style="font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:rgba(15,31,44,.68)">Enter FX $USD</span>
+              <span style="font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:rgba(15,31,44,.68)">1 US dollar buys</span>
               <sc-if value="{{ fxUnused }}" hint-placeholder-val="{{ false }}">
                 <span style="padding:3px 8px;border-radius:6px;background:rgba(15,31,44,.07);font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(15,31,44,.62)">Not applied · USD</span>
               </sc-if>
@@ -261,9 +272,9 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
           </div>
         </section>
 
-        <section style="position:sticky;top:104px;border-radius:24px;padding:28px;background:linear-gradient(158deg,rgba(255,255,255,.92),rgba(255,255,255,.7));backdrop-filter:blur(28px) saturate(180%);-webkit-backdrop-filter:blur(28px) saturate(180%);border:1px solid rgba(255,255,255,.95);box-shadow:0 34px 74px -30px rgba(15,31,44,.3),inset 0 1px 0 #FFFFFF;display:flex;flex-direction:column;gap:22px;overflow:hidden">
+        <section class="price-card" style="position:sticky;top:104px;border-radius:24px;padding:28px;background:linear-gradient(158deg,rgba(255,255,255,.92),rgba(255,255,255,.7));backdrop-filter:blur(28px) saturate(180%);-webkit-backdrop-filter:blur(28px) saturate(180%);border:1px solid rgba(255,255,255,.95);box-shadow:0 34px 74px -30px rgba(15,31,44,.3),inset 0 1px 0 #FFFFFF;display:flex;flex-direction:column;gap:22px;overflow:hidden">
           <div style="position:absolute;top:-90px;right:-70px;width:290px;height:290px;border-radius:50%;background:radial-gradient(circle,rgba(220,143,99,.28),transparent 66%);pointer-events:none"></div>
-          <div style="display:flex;align-items:center;gap:12px;position:relative">
+          <div class="price-head" style="display:flex;align-items:center;flex-wrap:wrap;gap:12px;position:relative">
             <span style="width:3px;height:17px;border-radius:2px;background:linear-gradient(180deg,#DC8F63,#A75839)"></span>
             <h2 style="margin:0;font-family:'Doppio One',sans-serif;font-size:15px;font-weight:400;letter-spacing:.05em;color:#0F1F2C">Customer Price</h2>
             <sc-if value="{{ copyIdle }}" hint-placeholder-val="{{ true }}">
@@ -325,6 +336,9 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
                 <input type="range" min="10" max="100" step="1" value="{{ marginPct }}" sc-camel-on-change="{{ onMargin }}" style="flex:1;min-width:0;height:6px;accent-color:#A75839;cursor:pointer">
                 <button sc-camel-on-click="{{ marginUp }}" style="width:34px;height:34px;flex:none;border-radius:10px;border:1px solid rgba(15,31,44,.13);background:rgba(255,255,255,.8);color:#0F1F2C;font-size:17px;font-weight:600;cursor:pointer;line-height:1;transition:transform .1s ease,background .18s ease,border-color .18s ease" style-hover="background:rgba(167,88,57,.12);border-color:rgba(167,88,57,.45)" style-active="transform:scale(.9)">+</button>
               </div>
+              <div style="display:flex;justify-content:space-between;margin-top:6px;padding:0 46px;font-size:10px;font-weight:600;color:rgba(15,31,44,.45)">
+                <span>10%</span><span>100%</span>
+              </div>
             </div>
           </sc-if>
 
@@ -385,6 +399,9 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
             <span style="padding:6px 10px;border-radius:9px;background:rgba(255,255,255,.8);border:1px solid rgba(15,31,44,.08);font-size:12px;font-weight:600;font-variant-numeric:tabular-nums;color:#0F1F2C">Low {{ historyDayLow }}</span>
           </div>
           <button sc-camel-on-click="{{ onUseChartClose }}" style="padding:10px 14px;border-radius:12px;border:1px solid rgba(154,78,48,.95);background:linear-gradient(150deg,#B4613F,#9A4E30);color:#FFFFFF;font-size:12.5px;font-weight:700;cursor:pointer" style-active="transform:scale(.97)">Use close</button>
+          <sc-if value="{{ closeApplied }}" hint-placeholder-val="{{ false }}">
+            <span style="font-size:12px;font-weight:600;color:#A75839">{{ closeNote }}</span>
+          </sc-if>
         </div>
 
         <div style="margin-top:12px;display:flex;gap:8px;align-items:stretch">
@@ -394,7 +411,7 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
             <span>{{ historyAxisLow }}</span>
           </div>
           <div style="flex:1;min-width:0">
-            <svg sc-camel-view-box="0 0 640 220" role="img" aria-label="{{ historyAria }}" sc-camel-on-mouse-move="{{ onChartMove }}" sc-camel-on-touch-move="{{ onChartMove }}" style="width:100%;max-width:100%;height:auto;display:block;touch-action:none;cursor:crosshair">
+            <svg sc-camel-view-box="0 0 640 220" role="img" aria-label="{{ historyAria }}" sc-camel-on-mouse-move="{{ onChartMove }}" sc-camel-on-touch-start="{{ onChartTouchStart }}" sc-camel-on-touch-move="{{ onChartMove }}" sc-camel-on-touch-end="{{ onChartTouchEnd }}" sc-camel-on-touch-cancel="{{ onChartTouchEnd }}" style="width:100%;max-width:100%;height:auto;display:block;touch-action:pan-y;cursor:crosshair">
               <line sc-camel-x1="8" sc-camel-x2="632" sc-camel-y1="{{ guideHigh }}" sc-camel-y2="{{ guideHigh }}" style="stroke:rgba(15,31,44,.08);stroke-width:1"></line>
               <line sc-camel-x1="8" sc-camel-x2="632" sc-camel-y1="{{ guideMid }}" sc-camel-y2="{{ guideMid }}" style="stroke:rgba(15,31,44,.08);stroke-width:1"></line>
               <line sc-camel-x1="8" sc-camel-x2="632" sc-camel-y1="{{ guideLow }}" sc-camel-y2="{{ guideLow }}" style="stroke:rgba(15,31,44,.08);stroke-width:1"></line>
@@ -426,6 +443,9 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
               </button>
             </sc-for>
           </div>
+          <sc-if value="{{ historyMore }}" hint-placeholder-val="{{ false }}">
+            <button sc-camel-on-click="{{ onToggleHistory }}" style="width:100%;padding:9px 12px;border:0;border-top:1px solid rgba(15,31,44,.08);background:rgba(248,240,227,.7);color:#A75839;font-size:12px;font-weight:700;cursor:pointer">{{ historyMoreLabel }}</button>
+          </sc-if>
         </div>
       </sc-if>
       <sc-if value="{{ historyLoading }}" hint-placeholder-val="{{ true }}">
@@ -488,7 +508,8 @@ class Component extends DCLogic {
     comex: '', fx: '', comexDirty: false, fxDirty: false,
     comexStatus: 'idle', fxStatus: 'idle', comexSrc: '', comexContract: '', comexMonth: '', fxSrc: '', stamp: '', busy: false,
     copied: false, shown: 0, delta: 0,
-    historyStatus: 'idle', history: null, historySpan: '1Y', historyIndex: -1
+    historyStatus: 'idle', history: null, historySpan: '1Y', historyIndex: -1, historyAll: false,
+    closeNote: ''
   };
 
   componentDidMount() {
@@ -511,7 +532,7 @@ class Component extends DCLogic {
     window.addEventListener('keydown', this._key);
   }
   componentWillUnmount() {
-    clearInterval(this._t); clearTimeout(this._ct); clearTimeout(this._dt);
+    clearInterval(this._t); clearTimeout(this._ct); clearTimeout(this._dt); clearTimeout(this._closeNote);
     clearTimeout(this._settle); cancelAnimationFrame(this._raf);
     window.removeEventListener('keydown', this._key);
   }
@@ -817,11 +838,31 @@ class Component extends DCLogic {
     return { line: line, area: area, band: band, min: min, max: max, xOf: xOf, yOf: yOf, top: top, bottom: top + innerH };
   }
 
+  onChartTouchStart(e) {
+    const point = e.touches && e.touches[0];
+    if (!point) return;
+    this._touch = { x: point.clientX, y: point.clientY, lock: null };
+  }
+
+  onChartTouchEnd() {
+    this._touch = null;
+  }
+
   onChartMove(e) {
     const pts = this.windowPoints();
     if (pts.length < 2) return;
     const point = e.touches && e.touches[0] ? e.touches[0] : e;
     if (!point || point.clientX == null) return;
+    if (e.touches) {
+      const start = this._touch || (this._touch = { x: point.clientX, y: point.clientY, lock: null });
+      const dx = Math.abs(point.clientX - start.x);
+      const dy = Math.abs(point.clientY - start.y);
+      if (!start.lock) {
+        if (dx < 8 && dy < 8) return;
+        start.lock = dx > dy ? 'x' : 'y';
+      }
+      if (start.lock === 'y') return;
+    }
     const rect = e.currentTarget.getBoundingClientRect();
     if (!rect.width) return;
     const vbX = ((point.clientX - rect.left) / rect.width) * 640;
@@ -845,7 +886,10 @@ class Component extends DCLogic {
     let idx = this.state.historyIndex;
     if (idx == null || idx < 0 || idx >= pts.length) idx = pts.length - 1;
     const close = pts[idx].close;
-    this.setState({ comex: close.toFixed(4), comexDirty: true, comexStatus: 'manual' });
+    const note = 'COMEX set to ' + this.prettyDayLong(pts[idx].t) + ' · $' + close.toFixed(4);
+    clearTimeout(this._closeNote);
+    this.setState({ comex: close.toFixed(4), comexDirty: true, comexStatus: 'manual', closeNote: note });
+    this._closeNote = setTimeout(() => this.setState({ closeNote: '' }), 4000);
   }
 
   peakIndex(points) {
@@ -1026,7 +1070,7 @@ class Component extends DCLogic {
       label: r.label,
       on: s.historySpan === r.id,
       off: s.historySpan !== r.id,
-      pick: () => { this._hoverI = null; this.setState({ historySpan: r.id, historyIndex: -1 }); }
+      pick: () => { this._hoverI = null; this.setState({ historySpan: r.id, historyIndex: -1, historyAll: false }); }
     }));
     const rowStyle = (on) => 'display:grid;grid-template-columns:1.5fr repeat(4,1fr);gap:8px;width:100%;padding:7px 10px;border:0;border-bottom:1px solid rgba(15,31,44,.06);background:'
       + (on ? 'rgba(167,88,57,.14)' : 'transparent')
@@ -1111,16 +1155,29 @@ class Component extends DCLogic {
       peakY: geo.yOf(peakHigh).toFixed(1),
       historyIndex: String(idx),
       historyLastIndex: String(pts.length - 1),
-      historyRows: pts.map((p, i) => ({
-        date: this.prettyDayLong(p.t),
-        open: (p.open != null ? p.open : p.close).toFixed(4),
-        high: (p.high != null ? p.high : p.close).toFixed(4),
-        low: (p.low != null ? p.low : p.close).toFixed(4),
-        close: p.close.toFixed(4),
-        style: rowStyle(i === idx),
-        pick: () => { this._hoverI = i; this.setState({ historyIndex: i }); }
-      })).reverse(),
+      historyRows: (function () {
+        const ids = pts.map((p, i) => i);
+        const shown = s.historyAll ? ids : ids.slice(-10);
+        const withDay = !s.historyAll && shown.indexOf(idx) < 0 ? [idx].concat(shown) : shown;
+        return withDay;
+      })().reverse().map((i) => {
+        const p = pts[i];
+        return {
+          date: this.prettyDayLong(p.t),
+          open: (p.open != null ? p.open : p.close).toFixed(4),
+          high: (p.high != null ? p.high : p.close).toFixed(4),
+          low: (p.low != null ? p.low : p.close).toFixed(4),
+          close: p.close.toFixed(4),
+          style: rowStyle(i === idx),
+          pick: () => { this._hoverI = i; this.setState({ historyIndex: i }); }
+        };
+      }),
+      historyMore: pts.length > 10,
+      historyMoreLabel: s.historyAll ? 'Show latest' : 'Show all',
+      onToggleHistory: () => this.setState((prev) => ({ historyAll: !prev.historyAll })),
       onChartMove: (e) => this.onChartMove(e),
+      onChartTouchStart: (e) => this.onChartTouchStart(e),
+      onChartTouchEnd: () => this.onChartTouchEnd(),
       onChartScrub: (e) => this.onChartScrub(e),
       onUseChartClose: () => this.useChartClose(),
       onShowPeak: () => this.showPeak()
@@ -1199,7 +1256,11 @@ class Component extends DCLogic {
       formOpts: this.chips(FORMS, 'formIdx', s.formIdx),
       thicknessOpts: this.chips(THICKNESS, 'thicknessIdx', s.thicknessIdx),
       widthOpts: this.chips(WIDTHS, 'widthIdx', s.widthIdx),
-      lengthOpts: this.chips(LENGTHS, 'lengthIdx', s.lengthIdx)
+      lengthOpts: this.chips(LENGTHS, 'lengthIdx', s.lengthIdx),
+      lengthWrapStyle: 'display:flex;flex-wrap:wrap;gap:8px' + (s.formIdx === 2 ? ';opacity:.4;pointer-events:none' : ''),
+      lengthForSheetOnly: s.formIdx === 2,
+      closeApplied: !!s.closeNote,
+      closeNote: s.closeNote || ''
     };
   }
 }
