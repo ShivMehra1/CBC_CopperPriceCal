@@ -398,30 +398,23 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
             <span style="padding:6px 10px;border-radius:9px;background:rgba(255,255,255,.8);border:1px solid rgba(15,31,44,.08);font-size:12px;font-weight:600;font-variant-numeric:tabular-nums;color:#0F1F2C">High {{ historyDayHigh }}</span>
             <span style="padding:6px 10px;border-radius:9px;background:rgba(255,255,255,.8);border:1px solid rgba(15,31,44,.08);font-size:12px;font-weight:600;font-variant-numeric:tabular-nums;color:#0F1F2C">Low {{ historyDayLow }}</span>
           </div>
-          <button sc-camel-on-click="{{ onUseChartClose }}" style="padding:10px 14px;border-radius:12px;border:1px solid rgba(154,78,48,.95);background:linear-gradient(150deg,#B4613F,#9A4E30);color:#FFFFFF;font-size:12.5px;font-weight:700;cursor:pointer" style-active="transform:scale(.97)">Use close</button>
-          <sc-if value="{{ closeApplied }}" hint-placeholder-val="{{ false }}">
-            <span style="font-size:12px;font-weight:600;color:#A75839">{{ closeNote }}</span>
-          </sc-if>
         </div>
 
         <div style="margin-top:12px;display:flex;gap:8px;align-items:stretch">
-          <div style="width:58px;flex:none;display:flex;flex-direction:column;justify-content:space-between;padding:8px 0 22px;font-size:10px;font-weight:700;font-variant-numeric:tabular-nums;color:rgba(15,31,44,.5);text-align:right">
+          <div style="width:58px;flex:none;display:flex;flex-direction:column;justify-content:space-between;padding:8px 0;font-size:10px;font-weight:700;font-variant-numeric:tabular-nums;color:rgba(15,31,44,.5);text-align:right">
             <span>{{ historyAxisHigh }}</span>
             <span>{{ historyAxisMid }}</span>
             <span>{{ historyAxisLow }}</span>
           </div>
           <div style="flex:1;min-width:0">
-            <svg sc-camel-view-box="0 0 640 220" role="img" aria-label="{{ historyAria }}" sc-camel-on-mouse-move="{{ onChartMove }}" sc-camel-on-touch-start="{{ onChartTouchStart }}" sc-camel-on-touch-move="{{ onChartMove }}" sc-camel-on-touch-end="{{ onChartTouchEnd }}" sc-camel-on-touch-cancel="{{ onChartTouchEnd }}" style="width:100%;max-width:100%;height:auto;display:block;touch-action:pan-y;cursor:crosshair">
+            <svg sc-camel-view-box="0 0 640 220" role="img" aria-label="{{ historyAria }}" style="width:100%;max-width:100%;height:auto;display:block">
               <line sc-camel-x1="8" sc-camel-x2="632" sc-camel-y1="{{ guideHigh }}" sc-camel-y2="{{ guideHigh }}" style="stroke:rgba(15,31,44,.08);stroke-width:1"></line>
               <line sc-camel-x1="8" sc-camel-x2="632" sc-camel-y1="{{ guideMid }}" sc-camel-y2="{{ guideMid }}" style="stroke:rgba(15,31,44,.08);stroke-width:1"></line>
               <line sc-camel-x1="8" sc-camel-x2="632" sc-camel-y1="{{ guideLow }}" sc-camel-y2="{{ guideLow }}" style="stroke:rgba(15,31,44,.08);stroke-width:1"></line>
               <polygon points="{{ historyBand }}" style="fill:rgba(180,97,63,.16);stroke:none"></polygon>
               <polygon points="{{ historyArea }}" style="fill:rgba(180,97,63,.1);stroke:none"></polygon>
               <polyline points="{{ historyLine }}" style="fill:none;stroke:#A75839;stroke-width:1.15;stroke-linejoin:round;stroke-linecap:round"></polyline>
-              <line sc-camel-x1="{{ cursorX }}" sc-camel-x2="{{ cursorX }}" sc-camel-y1="12" sc-camel-y2="200" style="stroke:rgba(15,31,44,.22);stroke-width:.75"></line>
-              <circle sc-camel-cx="{{ cursorX }}" sc-camel-cy="{{ cursorY }}" r="3.5" style="fill:#A75839;stroke:#FFFFFF;stroke-width:1"></circle>
             </svg>
-            <input type="range" min="0" max="{{ historyLastIndex }}" step="1" value="{{ historyIndex }}" sc-camel-on-input="{{ onChartScrub }}" aria-label="Choose a trading day" style="width:100%;margin-top:6px;accent-color:#A75839;cursor:pointer">
           </div>
         </div>
         <div style="display:flex;justify-content:space-between;gap:8px;margin-top:4px;font-size:11px;font-weight:600;color:rgba(15,31,44,.55)">
@@ -434,13 +427,13 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
           </div>
           <div style="max-height:240px;overflow:auto">
             <sc-for list="{{ historyRows }}" as="row" hint-placeholder-count="6">
-              <button sc-camel-on-click="{{ row.pick }}" style="{{ row.style }}">
+              <div style="{{ row.style }}">
                 <span style="text-align:left">{{ row.date }}</span>
                 <span>{{ row.open }}</span>
                 <span>{{ row.high }}</span>
                 <span>{{ row.low }}</span>
                 <span>{{ row.close }}</span>
-              </button>
+              </div>
             </sc-for>
           </div>
           <sc-if value="{{ historyMore }}" hint-placeholder-val="{{ false }}">
@@ -508,8 +501,7 @@ class Component extends DCLogic {
     comex: '', fx: '', comexDirty: false, fxDirty: false,
     comexStatus: 'idle', fxStatus: 'idle', comexSrc: '', comexContract: '', comexMonth: '', fxSrc: '', stamp: '', busy: false,
     copied: false, shown: 0, delta: 0,
-    historyStatus: 'idle', history: null, historySpan: '1Y', historyIndex: -1, historyAll: false,
-    closeNote: ''
+    historyStatus: 'idle', history: null, historySpan: '1Y', historyIndex: -1, historyAll: false
   };
 
   componentDidMount() {
@@ -532,7 +524,7 @@ class Component extends DCLogic {
     window.addEventListener('keydown', this._key);
   }
   componentWillUnmount() {
-    clearInterval(this._t); clearTimeout(this._ct); clearTimeout(this._dt); clearTimeout(this._closeNote);
+    clearInterval(this._t); clearTimeout(this._ct); clearTimeout(this._dt);
     clearTimeout(this._settle); cancelAnimationFrame(this._raf);
     window.removeEventListener('keydown', this._key);
   }
@@ -838,60 +830,6 @@ class Component extends DCLogic {
     return { line: line, area: area, band: band, min: min, max: max, xOf: xOf, yOf: yOf, top: top, bottom: top + innerH };
   }
 
-  onChartTouchStart(e) {
-    const point = e.touches && e.touches[0];
-    if (!point) return;
-    this._touch = { x: point.clientX, y: point.clientY, lock: null };
-  }
-
-  onChartTouchEnd() {
-    this._touch = null;
-  }
-
-  onChartMove(e) {
-    const pts = this.windowPoints();
-    if (pts.length < 2) return;
-    const point = e.touches && e.touches[0] ? e.touches[0] : e;
-    if (!point || point.clientX == null) return;
-    if (e.touches) {
-      const start = this._touch || (this._touch = { x: point.clientX, y: point.clientY, lock: null });
-      const dx = Math.abs(point.clientX - start.x);
-      const dy = Math.abs(point.clientY - start.y);
-      if (!start.lock) {
-        if (dx < 8 && dy < 8) return;
-        start.lock = dx > dy ? 'x' : 'y';
-      }
-      if (start.lock === 'y') return;
-    }
-    const rect = e.currentTarget.getBoundingClientRect();
-    if (!rect.width) return;
-    const vbX = ((point.clientX - rect.left) / rect.width) * 640;
-    const t = (vbX - 8) / 624;
-    const i = Math.round(Math.max(0, Math.min(1, t)) * (pts.length - 1));
-    if (i !== this._hoverI) {
-      this._hoverI = i;
-      this.setState({ historyIndex: i });
-    }
-  }
-
-  onChartScrub(e) {
-    const i = Number(e.target.value);
-    this._hoverI = i;
-    this.setState({ historyIndex: i });
-  }
-
-  useChartClose() {
-    const pts = this.windowPoints();
-    if (!pts.length) return;
-    let idx = this.state.historyIndex;
-    if (idx == null || idx < 0 || idx >= pts.length) idx = pts.length - 1;
-    const close = pts[idx].close;
-    const note = 'COMEX set to ' + this.prettyDayLong(pts[idx].t) + ' · $' + close.toFixed(4);
-    clearTimeout(this._closeNote);
-    this.setState({ comex: close.toFixed(4), comexDirty: true, comexStatus: 'manual', closeNote: note });
-    this._closeNote = setTimeout(() => this.setState({ closeNote: '' }), 4000);
-  }
-
   peakIndex(points) {
     let best = 0;
     for (let i = 1; i < points.length; i++) {
@@ -900,14 +838,6 @@ class Component extends DCLogic {
       if (hi > prev) best = i;
     }
     return best;
-  }
-
-  showPeak() {
-    const pts = this.windowPoints();
-    if (pts.length < 2) return;
-    const i = this.peakIndex(pts);
-    this._hoverI = i;
-    this.setState({ historyIndex: i });
   }
 
   prettyDay(iso) {
@@ -1070,11 +1000,9 @@ class Component extends DCLogic {
       label: r.label,
       on: s.historySpan === r.id,
       off: s.historySpan !== r.id,
-      pick: () => { this._hoverI = null; this.setState({ historySpan: r.id, historyIndex: -1, historyAll: false }); }
+      pick: () => { this.setState({ historySpan: r.id, historyIndex: -1, historyAll: false }); }
     }));
-    const rowStyle = (on) => 'display:grid;grid-template-columns:1.5fr repeat(4,1fr);gap:8px;width:100%;padding:7px 10px;border:0;border-bottom:1px solid rgba(15,31,44,.06);background:'
-      + (on ? 'rgba(167,88,57,.14)' : 'transparent')
-      + ';color:#0F1F2C;font:600 12px/1.3 DM Sans,system-ui,sans-serif;font-variant-numeric:tabular-nums;text-align:right;cursor:pointer';
+    const rowStyle = 'display:grid;grid-template-columns:1.5fr repeat(4,1fr);gap:8px;width:100%;padding:7px 10px;border:0;border-bottom:1px solid rgba(15,31,44,.06);background:transparent;color:#0F1F2C;font:600 12px/1.3 DM Sans,system-ui,sans-serif;font-variant-numeric:tabular-nums;text-align:right';
     const blank = {
       historyRange: '',
       historyChange: '', historyPct: '', historyAria: 'COMEX copper over the past year',
@@ -1089,19 +1017,12 @@ class Component extends DCLogic {
       historyPeak: '', historyPeakDay: '',
       historyAxisHigh: '', historyAxisMid: '', historyAxisLow: '',
       guideHigh: '14', guideMid: '110', guideLow: '200',
-      cursorX: '8', cursorY: '110', peakX: '8', peakY: '14',
-      historyIndex: '0', historyLastIndex: '0',
-      historyRows: [],
-      onChartMove: (e) => this.onChartMove(e),
-      onChartScrub: (e) => this.onChartScrub(e),
-      onUseChartClose: () => this.useChartClose(),
-      onShowPeak: () => this.showPeak()
+      historyRows: []
     };
     const pts = this.windowPoints();
     if (s.historyStatus !== 'ready' || pts.length < 2) return blank;
     const geo = this.chartGeometry(pts);
-    let idx = s.historyIndex;
-    if (idx == null || idx < 0 || idx >= pts.length) idx = pts.length - 1;
+    const idx = pts.length - 1;
     const day = pts[idx];
     const first = pts[0];
     const last = pts[pts.length - 1];
@@ -1149,18 +1070,7 @@ class Component extends DCLogic {
       guideHigh: geo.yOf(geo.max).toFixed(1),
       guideMid: geo.yOf((geo.max + geo.min) / 2).toFixed(1),
       guideLow: geo.yOf(geo.min).toFixed(1),
-      cursorX: geo.xOf(idx).toFixed(1),
-      cursorY: geo.yOf(day.close).toFixed(1),
-      peakX: geo.xOf(peakAt).toFixed(1),
-      peakY: geo.yOf(peakHigh).toFixed(1),
-      historyIndex: String(idx),
-      historyLastIndex: String(pts.length - 1),
-      historyRows: (function () {
-        const ids = pts.map((p, i) => i);
-        const shown = s.historyAll ? ids : ids.slice(-10);
-        const withDay = !s.historyAll && shown.indexOf(idx) < 0 ? [idx].concat(shown) : shown;
-        return withDay;
-      })().reverse().map((i) => {
+      historyRows: (s.historyAll ? pts.map((p, i) => i) : pts.map((p, i) => i).slice(-10)).reverse().map((i) => {
         const p = pts[i];
         return {
           date: this.prettyDayLong(p.t),
@@ -1168,19 +1078,12 @@ class Component extends DCLogic {
           high: (p.high != null ? p.high : p.close).toFixed(4),
           low: (p.low != null ? p.low : p.close).toFixed(4),
           close: p.close.toFixed(4),
-          style: rowStyle(i === idx),
-          pick: () => { this._hoverI = i; this.setState({ historyIndex: i }); }
+          style: rowStyle
         };
       }),
       historyMore: pts.length > 10,
       historyMoreLabel: s.historyAll ? 'Show latest' : 'Show all',
-      onToggleHistory: () => this.setState((prev) => ({ historyAll: !prev.historyAll })),
-      onChartMove: (e) => this.onChartMove(e),
-      onChartTouchStart: (e) => this.onChartTouchStart(e),
-      onChartTouchEnd: () => this.onChartTouchEnd(),
-      onChartScrub: (e) => this.onChartScrub(e),
-      onUseChartClose: () => this.useChartClose(),
-      onShowPeak: () => this.showPeak()
+      onToggleHistory: () => this.setState((prev) => ({ historyAll: !prev.historyAll }))
     };
   }
 
@@ -1258,9 +1161,7 @@ class Component extends DCLogic {
       widthOpts: this.chips(WIDTHS, 'widthIdx', s.widthIdx),
       lengthOpts: this.chips(LENGTHS, 'lengthIdx', s.lengthIdx),
       lengthWrapStyle: 'display:flex;flex-wrap:wrap;gap:8px' + (s.formIdx === 2 ? ';opacity:.4;pointer-events:none' : ''),
-      lengthForSheetOnly: s.formIdx === 2,
-      closeApplied: !!s.closeNote,
-      closeNote: s.closeNote || ''
+      lengthForSheetOnly: s.formIdx === 2
     };
   }
 }
