@@ -9,7 +9,7 @@
 <x-dc>
 <helmet>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>CBC · Roofing Copper Pricing Tool</title>
+<title>CBC · Roofing copper prices</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
 <style>/* latin-ext */
@@ -82,7 +82,7 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
       <img src="/assets/logo.png" alt="CBC Specialty Metals" style="height:40px;width:auto;display:block;flex:none">
       <div style="width:1px;height:44px;background:linear-gradient(180deg,transparent,rgba(15,31,44,.16),transparent)"></div>
       <div style="display:flex;flex-direction:column;gap:4px;margin-right:auto;flex:1 1 190px;min-width:0">
-        <h1 style="margin:0;font-family:'Doppio One',sans-serif;font-size:21px;line-height:1.1;font-weight:400;color:#0F1F2C">Roofing Copper Pricing Tool</h1>
+        <h1 style="margin:0;font-family:'Doppio One',sans-serif;font-size:21px;line-height:1.1;font-weight:400;color:#0F1F2C">Roofing copper prices</h1>
       </div>
 
       <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-left:auto">
@@ -339,7 +339,7 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
       <div style="display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap">
         <span style="width:3px;height:17px;border-radius:2px;background:linear-gradient(180deg,#DC8F63,#A75839);margin-top:3px;flex:none"></span>
         <div style="min-width:200px;flex:1">
-          <h2 style="margin:0;font-family:'Doppio One',sans-serif;font-size:18px;font-weight:400;letter-spacing:.04em;color:#0F1F2C">Copper</h2>
+          <h2 style="margin:0;font-family:'Doppio One',sans-serif;font-size:18px;font-weight:400;letter-spacing:.04em;color:#0F1F2C">COMEX copper, past year</h2>
           <div style="margin-top:4px;font-size:12px;color:rgba(15,31,44,.6)">{{ historyRange }}</div>
         </div>
         <div style="display:flex;flex-wrap:wrap;gap:8px;margin-left:auto">
@@ -399,10 +399,10 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
               <line sc-camel-x1="8" sc-camel-x2="632" sc-camel-y1="{{ guideMid }}" sc-camel-y2="{{ guideMid }}" style="stroke:rgba(15,31,44,.08);stroke-width:1"></line>
               <line sc-camel-x1="8" sc-camel-x2="632" sc-camel-y1="{{ guideLow }}" sc-camel-y2="{{ guideLow }}" style="stroke:rgba(15,31,44,.08);stroke-width:1"></line>
               <polygon points="{{ historyBand }}" style="fill:rgba(180,97,63,.16);stroke:none"></polygon>
-              <polygon points="{{ historyArea }}" style="fill:rgba(180,97,63,.2);stroke:none"></polygon>
-              <polyline points="{{ historyLine }}" style="fill:none;stroke:#A75839;stroke-width:2.25;stroke-linejoin:round;stroke-linecap:round"></polyline>
-              <line sc-camel-x1="{{ cursorX }}" sc-camel-x2="{{ cursorX }}" sc-camel-y1="12" sc-camel-y2="200" style="stroke:rgba(15,31,44,.28);stroke-width:1"></line>
-              <circle sc-camel-cx="{{ cursorX }}" sc-camel-cy="{{ cursorY }}" r="5" style="fill:#A75839;stroke:#FFFFFF;stroke-width:2"></circle>
+              <polygon points="{{ historyArea }}" style="fill:rgba(180,97,63,.1);stroke:none"></polygon>
+              <polyline points="{{ historyLine }}" style="fill:none;stroke:#A75839;stroke-width:1.15;stroke-linejoin:round;stroke-linecap:round"></polyline>
+              <line sc-camel-x1="{{ cursorX }}" sc-camel-x2="{{ cursorX }}" sc-camel-y1="12" sc-camel-y2="200" style="stroke:rgba(15,31,44,.22);stroke-width:.75"></line>
+              <circle sc-camel-cx="{{ cursorX }}" sc-camel-cy="{{ cursorY }}" r="3.5" style="fill:#A75839;stroke:#FFFFFF;stroke-width:1"></circle>
             </svg>
             <input type="range" min="0" max="{{ historyLastIndex }}" step="1" value="{{ historyIndex }}" sc-camel-on-input="{{ onChartScrub }}" aria-label="Choose a trading day" style="width:100%;margin-top:6px;accent-color:#A75839;cursor:pointer">
           </div>
