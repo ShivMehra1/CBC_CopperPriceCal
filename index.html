@@ -300,7 +300,7 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
               <div style="margin-top:12px;font-size:11.5px;font-weight:500;color:#A75839">The CME quote is unavailable. Type the COMEX price to price a quote.</div>
             </sc-if>
             <sc-if value="{{ priceWaitingQuiet }}" hint-placeholder-val="{{ false }}">
-              <div style="margin-top:12px;font-size:11.5px;font-weight:500;color:rgba(15,31,44,.6)">Waiting on a COMEX value before pricing</div>
+              <div style="margin-top:12px;font-size:11.5px;font-weight:500;color:rgba(15,31,44,.6)">{{ waitingText }}</div>
             </sc-if>
           </div>
 
@@ -394,7 +394,7 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
             <span>{{ historyAxisLow }}</span>
           </div>
           <div style="flex:1;min-width:0">
-            <svg sc-camel-view-box="0 0 640 220" role="img" aria-label="{{ historyAria }}" sc-camel-on-mouse-move="{{ onChartMove }}" sc-camel-on-touch-move="{{ onChartMove }}" style="width:100%;max-width:100%;height:auto;display:block;touch-action:pan-y;cursor:crosshair">
+            <svg sc-camel-view-box="0 0 640 220" role="img" aria-label="{{ historyAria }}" sc-camel-on-mouse-move="{{ onChartMove }}" sc-camel-on-touch-move="{{ onChartMove }}" style="width:100%;max-width:100%;height:auto;display:block;touch-action:none;cursor:crosshair">
               <line sc-camel-x1="8" sc-camel-x2="632" sc-camel-y1="{{ guideHigh }}" sc-camel-y2="{{ guideHigh }}" style="stroke:rgba(15,31,44,.08);stroke-width:1"></line>
               <line sc-camel-x1="8" sc-camel-x2="632" sc-camel-y1="{{ guideMid }}" sc-camel-y2="{{ guideMid }}" style="stroke:rgba(15,31,44,.08);stroke-width:1"></line>
               <line sc-camel-x1="8" sc-camel-x2="632" sc-camel-y1="{{ guideLow }}" sc-camel-y2="{{ guideLow }}" style="stroke:rgba(15,31,44,.08);stroke-width:1"></line>
@@ -495,9 +495,12 @@ class Component extends DCLogic {
     if (this.props.autoFetch !== false) this.refreshAll();
     else this.loadHistory();
     this.arm();
-    this._target = this.compute().price;
-    this._shown = this._target;
-    this.setState({ shown: this._target });
+    if (this.quoteReady()) {
+      this._target = this.compute().price;
+      this._shown = this._target;
+      this._priced = true;
+      this.setState({ shown: this._target });
+    }
     this._key = (e) => {
       if (/input|textarea|select/i.test(e.target.tagName)) return;
       if (e.key === 'ArrowRight' || e.key === 'ArrowUp') { e.preventDefault(); this.bump(1); }
@@ -512,12 +515,32 @@ class Component extends DCLogic {
     clearTimeout(this._settle); cancelAnimationFrame(this._raf);
     window.removeEventListener('keydown', this._key);
   }
+  quoteReady() {
+    const s = this.state;
+    if (!((parseFloat(s.comex) || 0) > 0)) return false;
+    if (s.currencyIdx === 1 && !(parseFloat(s.fx) > 0)) return false;
+    return true;
+  }
+
   componentDidUpdate(prev) {
     if (prev.refreshSeconds !== this.props.refreshSeconds) this.arm();
+    if (!this.quoteReady()) {
+      this._priced = false;
+      return;
+    }
     const t = this.compute().price;
     if (this._target === undefined || Math.abs(t - this._target) > 0.0005) {
-      const from = this._shown != null ? this._shown : t;
+      const hadPrice = !!this._priced;
+      const from = hadPrice && this._shown != null ? this._shown : t;
       this._target = t;
+      this._priced = true;
+      if (!hadPrice) {
+        cancelAnimationFrame(this._raf);
+        clearTimeout(this._settle);
+        this._shown = t;
+        this.setState({ shown: t, delta: 0 });
+        return;
+      }
       this.tweenTo(t);
       const d = t - from;
       if (from > 0 && Math.abs(d) > 0.005) {
@@ -563,8 +586,23 @@ class Component extends DCLogic {
       clearTimeout(this._ct);
       this._ct = setTimeout(() => this.setState({ copied: false }), 1800);
     };
-    if (navigator.clipboard) navigator.clipboard.writeText(txt).then(done, done);
-    else done();
+    const fallback = () => {
+      try {
+        const el = document.createElement('textarea');
+        el.value = txt;
+        el.setAttribute('readonly', '');
+        el.style.position = 'fixed';
+        el.style.left = '-9999px';
+        document.body.appendChild(el);
+        el.select();
+        const ok = document.execCommand('copy');
+        el.remove();
+        if (ok) done();
+      } catch (e) { /* leave the button as Copy */ }
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(txt).then(done, fallback);
+    } else fallback();
   }
 
   arm() {
@@ -599,9 +637,9 @@ class Component extends DCLogic {
     try {
       const data = await this.fetchHistory();
       if (!data) throw new Error('empty history');
+      const keepDay = this._historyOk ? this.state.historyIndex : -1;
       this._historyOk = true;
-      this._hoverI = null;
-      this.setState({ historyStatus: 'ready', history: data, historyIndex: -1 });
+      this.setState({ historyStatus: 'ready', history: data, historyIndex: keepDay });
     } catch (e) {
       if (!this._historyOk) this.setState({ historyStatus: 'error' });
     }
@@ -630,23 +668,30 @@ class Component extends DCLogic {
       body = JSON.parse(raw.slice(brace, brace + end + 1));
     }
     const quotes = body && Array.isArray(body.quotes) ? body.quotes : [];
-    let best = null;
+    const qty = (value) => {
+      const n = parseFloat(String(value == null ? '' : value).replace(/,/g, ''));
+      return isFinite(n) && n > 0 ? n : 0;
+    };
+    let bestVol = null;
+    let bestOi = null;
     for (const quote of quotes) {
       if (quote && quote.productCode && quote.productCode !== 'HG') continue;
-      const vol = parseFloat(String(quote.volume == null ? '' : quote.volume).replace(/,/g, ''));
-      const volume = isFinite(vol) && vol > 0 ? vol : 0;
-      if (!best || volume > best.volume) best = { quote: quote, volume: volume };
+      const lastMatch = String(quote.last == null ? '' : quote.last).match(/-?\d+(?:\.\d+)?/);
+      const priorMatch = String(quote.priorSettle == null ? '' : quote.priorSettle).match(/-?\d+(?:\.\d+)?/);
+      const last = lastMatch ? parseFloat(lastMatch[0]) : NaN;
+      const prior = priorMatch ? parseFloat(priorMatch[0]) : NaN;
+      const price = (isFinite(last) && last > 0.5 && last < 50) ? last : prior;
+      if (!(price > 0.5 && price < 50)) continue;
+      const volume = qty(quote.volume);
+      const oi = qty(quote.openInterest);
+      if (!bestVol || volume > bestVol.volume) bestVol = { quote: quote, volume: volume, price: price };
+      if (!bestOi || oi > bestOi.oi) bestOi = { quote: quote, oi: oi, price: price };
     }
+    const best = bestVol && bestVol.volume > 0 ? bestVol : bestOi;
     if (!best) return null;
     const quote = best.quote;
-    const lastMatch = String(quote.last == null ? '' : quote.last).match(/-?\d+(?:\.\d+)?/);
-    const priorMatch = String(quote.priorSettle == null ? '' : quote.priorSettle).match(/-?\d+(?:\.\d+)?/);
-    const last = lastMatch ? parseFloat(lastMatch[0]) : NaN;
-    const prior = priorMatch ? parseFloat(priorMatch[0]) : NaN;
-    const price = (isFinite(last) && last > 0.5 && last < 50) ? last : prior;
-    if (!(price > 0.5 && price < 50)) return null;
     return {
-      price: price,
+      price: best.price,
       quoteCode: quote.quoteCode || '',
       expirationMonth: quote.expirationMonth || '',
       yahoo: this.yahooFromQuote(quote.quoteCode),
@@ -873,7 +918,14 @@ class Component extends DCLogic {
   }
 
   async refreshAll() {
-    this.setState({ busy: true, comexStatus: 'loading', fxStatus: 'loading' });
+    const seq = (this._refreshSeq = (this._refreshSeq || 0) + 1);
+    const hadComex = !!String(this.state.comex || '').trim();
+    const hadFx = !!String(this.state.fx || '').trim();
+    this.setState({
+      busy: true,
+      comexStatus: hadComex ? this.state.comexStatus : 'loading',
+      fxStatus: hadFx ? this.state.fxStatus : 'loading'
+    });
     this._cuAt = null;
     this._cuContract = '';
     this._cuMonth = '';
@@ -881,24 +933,31 @@ class Component extends DCLogic {
     this._cuSrc = '';
     this.loadHistory();
     const [cu, fx] = await Promise.all([this.chain(this.copperCands()), this.chain(this.fxCands())]);
+    if (seq !== this._refreshSeq) return;
     const at = this._cuAt ? new Date(this._cuAt) : new Date();
     const stamp = at.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    const next = { busy: false, stamp };
+    const next = { busy: false };
     if (cu) {
-      next.comexStatus = 'live';
-      next.comexSrc = this._cuSrc || cu.src;
-      next.comexContract = this._cuContract || '';
-      next.comexMonth = this._cuMonth || '';
-      if (!this.state.comexDirty) next.comex = cu.value.toFixed(4);
-    } else {
-      next.comexStatus = this.state.comex ? 'manual' : 'error';
+      next.stamp = stamp;
+      if (!this.state.comexDirty) {
+        next.comexStatus = 'live';
+        next.comexSrc = this._cuSrc || cu.src;
+        next.comexContract = this._cuContract || '';
+        next.comexMonth = this._cuMonth || '';
+        next.comex = cu.value.toFixed(4);
+      }
+    } else if (!this.state.comexDirty) {
+      next.comexStatus = 'error';
     }
     if (fx) {
-      next.fxStatus = 'live';
-      next.fxSrc = fx.src;
-      if (!this.state.fxDirty) next.fx = fx.value.toFixed(4);
-    } else {
-      next.fxStatus = this.state.fx ? 'manual' : 'error';
+      next.stamp = stamp;
+      if (!this.state.fxDirty) {
+        next.fxStatus = 'live';
+        next.fxSrc = fx.src;
+        next.fx = fx.value.toFixed(4);
+      }
+    } else if (!this.state.fxDirty) {
+      next.fxStatus = 'error';
     }
     this.setState(next);
   }
@@ -1079,23 +1138,26 @@ class Component extends DCLogic {
           + (s.comexSrc && s.comexSrc.indexOf('CME') === 0 && s.comexSrc.indexOf('10') < 0 ? ' · CME 10 min delay' : '')
           + ' · ' + s.stamp)
       : s.comexStatus === 'loading' ? 'Updating…'
-      : s.comexStatus === 'error' ? 'Live price unavailable — enter value manually'
+      : s.comexStatus === 'error' ? (c.comex > 0 ? 'Refresh failed. Showing the last price.' : 'Live price unavailable — enter value manually')
       : s.comexDirty ? 'Manual override' : 'Awaiting value';
     const fxNote = s.fxStatus === 'live' ? 'Live · updated ' + s.stamp
       : s.fxStatus === 'loading' ? 'Updating…'
-      : s.fxStatus === 'error' ? 'Rate unavailable — enter value manually'
+      : s.fxStatus === 'error' ? (parseFloat(s.fx) > 0 ? 'Refresh failed. Showing the last rate.' : 'Rate unavailable — enter value manually')
       : s.fxDirty ? 'Manual override' : 'Awaiting value';
+    const fxMissing = s.currencyIdx === 1 && !(parseFloat(s.fx) > 0);
+    const priceReady = c.comex > 0 && !fxMissing;
 
     const spec = THICKNESS[s.thicknessIdx - 1] + ' · ' + WIDTHS[s.widthIdx - 1] + ' × ' + LENGTHS[s.lengthIdx - 1]
       + ' · ' + FORMS[s.formIdx - 1] + ' · ' + ORIGINS[s.originIdx - 1] + ' · ' + FINISHES[s.finishIdx - 1];
-    this._copyTxt = this.money(c.price) + ' ' + CURRENCIES[s.currencyIdx - 1] + '/lb — ' + spec;
+    this._copyTxt = priceReady ? (this.money(c.price) + ' ' + CURRENCIES[s.currencyIdx - 1] + '/lb — ' + spec) : '';
 
     return {
-      priceText: c.comex > 0 ? this.money(s.shown != null ? s.shown : c.price) : '—',
-      priceReady: c.comex > 0,
-      priceWaiting: !(c.comex > 0),
+      priceText: priceReady ? this.money(s.shown != null ? s.shown : c.price) : '—',
+      priceReady: priceReady,
+      priceWaiting: !priceReady,
       feedDown: s.comexStatus === 'error' && !(c.comex > 0),
-      priceWaitingQuiet: !(c.comex > 0) && s.comexStatus !== 'error',
+      priceWaitingQuiet: !priceReady && !(s.comexStatus === 'error' && !(c.comex > 0)),
+      waitingText: !(c.comex > 0) ? 'Waiting on a COMEX value before pricing' : 'Waiting on the USD to CAD rate',
       deltaUp: c.comex > 0 && s.delta > 0.005,
       deltaDown: c.comex > 0 && s.delta < -0.005,
       deltaText: (s.delta >= 0 ? '+$' : '−$') + Math.abs(s.delta).toFixed(2),
@@ -1119,9 +1181,9 @@ class Component extends DCLogic {
       marginDown: () => this.setState((p) => ({ marginIdx: Math.max(1, p.marginIdx - 1) })),
 
       comexValue: s.comex,
-      onComex: (e) => this.setState({ comex: e.target.value, comexDirty: true, comexStatus: 'manual' }),
+      onComex: (e) => this.setState({ comex: String(e.target.value).replace(/,/g, '.'), comexDirty: true, comexStatus: 'manual' }),
       fxValue: s.fx,
-      onFx: (e) => this.setState({ fx: e.target.value, fxDirty: true, fxStatus: 'manual' }),
+      onFx: (e) => this.setState({ fx: String(e.target.value).replace(/,/g, '.'), fxDirty: true, fxStatus: 'manual' }),
       comexNote, fxNote,
       statusDot: dots[s.comexStatus] || dots.idle,
       fxDot: dots[s.fxStatus] || dots.idle,

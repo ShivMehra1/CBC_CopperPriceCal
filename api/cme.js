@@ -22,6 +22,11 @@ function volumeOf(quote) {
   return isFinite(v) && v > 0 ? v : 0;
 }
 
+function interestOf(quote) {
+  const v = num(quote && quote.openInterest);
+  return isFinite(v) && v > 0 ? v : 0;
+}
+
 // HGZ6 in 2026 → HGZ26.CMX. The digit on a CME quote code is the year within the decade.
 function yahooFromQuote(code, nowYear) {
   const matched = String(code || '').match(/^([A-Z]{2,3})([FGHJKMNQUVXZ])(\d)$/);
@@ -50,18 +55,25 @@ function parseCmeQuotes(text, nowYear) {
   }
   if (!body) return null;
   const quotes = body && Array.isArray(body.quotes) ? body.quotes : [];
-  let best = null;
+  let bestVol = null;
+  let bestOi = null;
   for (const quote of quotes) {
     if (quote && quote.productCode && quote.productCode !== 'HG') continue;
+    const last = num(quote.last);
+    const prior = num(quote.priorSettle);
+    const price = plausible(last) ? last : prior;
+    if (!plausible(price)) continue;
     const vol = volumeOf(quote);
-    if (!best || vol > best.vol) best = { quote, vol };
+    const oi = interestOf(quote);
+    if (!bestVol || vol > bestVol.vol) bestVol = { quote, vol, price };
+    if (!bestOi || oi > bestOi.oi) bestOi = { quote, oi, price };
   }
+  // Before the session has traded, every volume is 0 and the first listed
+  // month is the illiquid spot. Open interest names the active contract.
+  const best = bestVol && bestVol.vol > 0 ? bestVol : bestOi;
   if (!best) return null;
   const quote = best.quote;
-  const last = num(quote.last);
-  const prior = num(quote.priorSettle);
-  const price = plausible(last) ? last : prior;
-  if (!plausible(price)) return null;
+  const price = best.price;
   const quoteCode = quote.quoteCode || '';
   return {
     price: +price.toFixed(4),
@@ -74,8 +86,8 @@ function parseCmeQuotes(text, nowYear) {
     open: plausible(num(quote.open)) ? +num(quote.open).toFixed(4) : null,
     high: plausible(num(quote.high)) ? +num(quote.high).toFixed(4) : null,
     low: plausible(num(quote.low)) ? +num(quote.low).toFixed(4) : null,
-    priorSettle: plausible(prior) ? +prior.toFixed(4) : null,
-    volume: best.vol
+    priorSettle: plausible(num(quote.priorSettle)) ? +num(quote.priorSettle).toFixed(4) : null,
+    volume: best.vol || 0
   };
 }
 
