@@ -89,7 +89,7 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
       <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:13px;background:rgba(255,255,255,.78);border:1px solid rgba(15,31,44,.1)">
         <span style="width:7px;height:7px;border-radius:50%;background:{{ statusDot }};box-shadow:0 0 9px {{ statusDot }};animation:pulseDot 1.9s ease-in-out infinite;flex:none"></span>
         <div style="display:flex;flex-direction:column;gap:3px;white-space:nowrap">
-          <span style="font-size:9px;line-height:1;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:rgba(15,31,44,.6)">COMEX Copper</span>
+          <span style="font-size:9px;line-height:1;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:rgba(15,31,44,.6)">{{ tickerKicker }}</span>
           <span style="font-size:14px;line-height:1;font-weight:700;font-variant-numeric:tabular-nums;color:#0F1F2C">{{ tickerLabel }}</span>
         </div>
         <button sc-camel-on-click="{{ onRefresh }}" title="Refresh live prices" style="margin-left:4px;width:30px;height:30px;display:grid;place-items:center;border-radius:9px;border:1px solid rgba(15,31,44,.12);background:rgba(15,31,44,.04);color:rgba(15,31,44,.6);cursor:pointer;font-size:13px;transition:all .18s ease" style-hover="background:rgba(167,88,57,.14);color:#A75839;border-color:rgba(167,88,57,.45)">{{ refreshGlyph }}</button>
@@ -247,7 +247,7 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
           <div style="height:1px;background:linear-gradient(90deg,transparent,rgba(15,31,44,.13),transparent)"></div>
 
           <div>
-            <div style="font-size:11.5px;font-weight:500;color:rgba(15,31,44,.68);margin-bottom:9px">Enter value from: <a href="https://www.cmegroup.com/markets/metals/base/copper.html" target="_blank" rel="noopener">Comex Live</a></div>
+            <div style="font-size:11.5px;font-weight:500;color:rgba(15,31,44,.68);margin-bottom:9px">Check the print on <a href="https://www.cmegroup.com/markets/metals/base/copper.quotes.html" target="_blank" rel="noopener" style="color:#A75839;font-weight:700">CME Group copper quotes</a></div>
             <div style="font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:rgba(15,31,44,.68);margin-bottom:9px">Enter COMEX $USD</div>
             <div style="display:flex;align-items:center;border-radius:14px;background:#FFFFFF;border:1px solid rgba(167,88,57,.42);overflow:hidden;box-shadow:inset 0 2px 6px rgba(15,31,44,.06),0 0 0 3px rgba(220,143,99,.14)">
               <span style="padding:0 0 0 15px;font-size:19px;font-weight:600;color:#A75839;flex:none">$</span>
@@ -297,7 +297,7 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
               </div>
             </sc-if>
             <sc-if value="{{ feedDown }}" hint-placeholder-val="{{ false }}">
-              <div style="margin-top:12px;font-size:11.5px;font-weight:500;color:#A75839">Live COMEX feed is unavailable. Type the price from Comex Live to price a quote.</div>
+              <div style="margin-top:12px;font-size:11.5px;font-weight:500;color:#A75839">The CME quote is unavailable. Type the COMEX price to price a quote.</div>
             </sc-if>
             <sc-if value="{{ priceWaitingQuiet }}" hint-placeholder-val="{{ false }}">
               <div style="margin-top:12px;font-size:11.5px;font-weight:500;color:rgba(15,31,44,.6)">Waiting on a COMEX value before pricing</div>
@@ -339,7 +339,7 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
       <div style="display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap">
         <span style="width:3px;height:17px;border-radius:2px;background:linear-gradient(180deg,#DC8F63,#A75839);margin-top:3px;flex:none"></span>
         <div style="min-width:200px;flex:1">
-          <h2 style="margin:0;font-family:'Doppio One',sans-serif;font-size:18px;font-weight:400;letter-spacing:.04em;color:#0F1F2C">COMEX Copper · Past Year</h2>
+          <h2 style="margin:0;font-family:'Doppio One',sans-serif;font-size:18px;font-weight:400;letter-spacing:.04em;color:#0F1F2C">COMEX Copper · Active Contract</h2>
           <div style="margin-top:4px;font-size:12px;color:rgba(15,31,44,.6)">{{ historyRange }}</div>
         </div>
         <div style="display:flex;flex-wrap:wrap;gap:8px;margin-left:auto">
@@ -376,6 +376,12 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
       </sc-if>
 
       <sc-if value="{{ historyReady }}" hint-placeholder-val="{{ false }}">
+        <button sc-camel-on-click="{{ onShowPeak }}" style="margin-top:14px;width:100%;display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;padding:12px 14px;border-radius:14px;border:1px solid rgba(167,88,57,.35);background:linear-gradient(150deg,rgba(220,143,99,.2),rgba(255,255,255,.72));cursor:pointer;text-align:left" style-hover="border-color:rgba(154,78,48,.7)">
+          <span style="font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(15,31,44,.5)">Session high</span>
+          <span style="font-family:'Doppio One',sans-serif;font-size:26px;line-height:1;color:#A75839;font-variant-numeric:tabular-nums">{{ historyPeak }}</span>
+          <span style="font-size:13px;font-weight:650;color:#0F1F2C">{{ historyPeakDay }}</span>
+          <span style="margin-left:auto;font-size:12px;font-weight:700;color:#A75839">Show this day</span>
+        </button>
         <div style="margin-top:14px;display:flex;flex-wrap:wrap;gap:12px 18px;align-items:flex-end;justify-content:space-between">
           <div>
             <div style="font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(15,31,44,.5)">Selected session</div>
@@ -404,6 +410,7 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
               <polygon points="{{ historyBand }}" style="fill:rgba(180,97,63,.16);stroke:none"></polygon>
               <polygon points="{{ historyArea }}" style="fill:rgba(180,97,63,.2);stroke:none"></polygon>
               <polyline points="{{ historyLine }}" style="fill:none;stroke:#A75839;stroke-width:2.25;stroke-linejoin:round;stroke-linecap:round"></polyline>
+              <circle sc-camel-cx="{{ peakX }}" sc-camel-cy="{{ peakY }}" r="4.5" style="fill:#FFFFFF;stroke:#A75839;stroke-width:2"></circle>
               <line sc-camel-x1="{{ cursorX }}" sc-camel-x2="{{ cursorX }}" sc-camel-y1="12" sc-camel-y2="200" style="stroke:rgba(15,31,44,.28);stroke-width:1"></line>
               <circle sc-camel-cx="{{ cursorX }}" sc-camel-cy="{{ cursorY }}" r="5" style="fill:#A75839;stroke:#FFFFFF;stroke-width:2"></circle>
             </svg>
@@ -434,7 +441,7 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
         </div>
       </sc-if>
       <sc-if value="{{ historyLoading }}" hint-placeholder-val="{{ true }}">
-        <div style="margin-top:16px;font-size:12.5px;color:rgba(15,31,44,.55)">Loading a year of COMEX sessions…</div>
+        <div style="margin-top:16px;font-size:12.5px;color:rgba(15,31,44,.55)">Loading a year of the active COMEX contract…</div>
       </sc-if>
       <sc-if value="{{ historyError }}" hint-placeholder-val="{{ false }}">
         <div style="margin-top:16px;font-size:12.5px;color:rgba(15,31,44,.62)">The yearly COMEX chart is unavailable right now. The quote above still calculates from the live price or a price you type in.</div>
@@ -471,11 +478,17 @@ const ORIGINS = ['EU', 'US'];
 const CURRENCIES = ['CAD', 'USD'];
 const FINISHES = ['Mill Finish', 'Lead Coated'];
 
-const YQ = 'https://query1.finance.yahoo.com/v8/finance/chart/HG%3DF?interval=1d&range=5d';
+const CME_QUOTES = 'https://www.cmegroup.com/CmeWS/mvc/quotes/v2/438?pageSize=50';
 // Tolerates raw JSON and text-extraction proxies that prepend a header block.
 const yahooParse = (t) => {
   const i = t.indexOf('{"chart"');
-  const j = JSON.parse(i > 0 ? t.slice(i) : t);
+  const slice = i > 0 ? t.slice(i) : t;
+  let j;
+  try { j = JSON.parse(slice); }
+  catch (err) {
+    const end = slice.lastIndexOf('}');
+    j = JSON.parse(slice.slice(0, end + 1));
+  }
   const m = j && j.chart && j.chart.result && j.chart.result[0] && j.chart.result[0].meta;
   return m ? (m.regularMarketPrice || m.previousClose) : null;
 };
@@ -485,7 +498,7 @@ class Component extends DCLogic {
     marginIdx: 21, thicknessIdx: 2, widthIdx: 3, lengthIdx: 1,
     formIdx: 1, originIdx: 1, currencyIdx: 1, finishIdx: 1,
     comex: '', fx: '', comexDirty: false, fxDirty: false,
-    comexStatus: 'idle', fxStatus: 'idle', comexSrc: '', fxSrc: '', stamp: '', busy: false,
+    comexStatus: 'idle', fxStatus: 'idle', comexSrc: '', comexContract: '', comexMonth: '', fxSrc: '', stamp: '', busy: false,
     copied: false, shown: 0, delta: 0,
     historyStatus: 'idle', history: null, historySpan: '1Y', historyIndex: -1
   };
@@ -606,12 +619,66 @@ class Component extends DCLogic {
     }
   }
 
+  // CME quote codes look like HGZ6. Yahoo charts that contract as HGZ26.CMX.
+  yahooFromQuote(code) {
+    const matched = String(code || '').match(/^([A-Z]{2,3})([FGHJKMNQUVXZ])(\d)$/);
+    if (!matched) return null;
+    const year = new Date().getFullYear();
+    const decade = Math.floor(year / 10) * 10;
+    let full = decade + Number(matched[3]);
+    if (full < year - 1) full += 10;
+    return matched[1] + matched[2] + String(full).slice(-2) + '.CMX';
+  }
+
+  parseCmeQuote(text) {
+    const raw = String(text || '');
+    const tagged = raw.indexOf('{"quoteDelayed"');
+    const brace = tagged >= 0 ? tagged : raw.indexOf('{');
+    if (brace < 0) return null;
+    let body;
+    try { body = JSON.parse(raw.slice(brace)); }
+    catch (err) {
+      const end = raw.slice(brace).lastIndexOf('}');
+      body = JSON.parse(raw.slice(brace, brace + end + 1));
+    }
+    const quotes = body && Array.isArray(body.quotes) ? body.quotes : [];
+    let best = null;
+    for (const quote of quotes) {
+      if (quote && quote.productCode && quote.productCode !== 'HG') continue;
+      const vol = parseFloat(String(quote.volume == null ? '' : quote.volume).replace(/,/g, ''));
+      const volume = isFinite(vol) && vol > 0 ? vol : 0;
+      if (!best || volume > best.volume) best = { quote: quote, volume: volume };
+    }
+    if (!best) return null;
+    const quote = best.quote;
+    const lastMatch = String(quote.last == null ? '' : quote.last).match(/-?\d+(?:\.\d+)?/);
+    const priorMatch = String(quote.priorSettle == null ? '' : quote.priorSettle).match(/-?\d+(?:\.\d+)?/);
+    const last = lastMatch ? parseFloat(lastMatch[0]) : NaN;
+    const prior = priorMatch ? parseFloat(priorMatch[0]) : NaN;
+    const price = (isFinite(last) && last > 0.5 && last < 50) ? last : prior;
+    if (!(price > 0.5 && price < 50)) return null;
+    return {
+      price: price,
+      quoteCode: quote.quoteCode || '',
+      expirationMonth: quote.expirationMonth || '',
+      yahoo: this.yahooFromQuote(quote.quoteCode),
+      delay: body.quoteDelay || ''
+    };
+  }
+
   historyFromYahoo(text) {
     const i = text.indexOf('{"chart"');
-    const body = JSON.parse(i > 0 ? text.slice(i) : text);
+    const slice = i > 0 ? text.slice(i) : text;
+    let body;
+    try { body = JSON.parse(slice); }
+    catch (err) {
+      const end = slice.lastIndexOf('}');
+      body = JSON.parse(slice.slice(0, end + 1));
+    }
     const result = body && body.chart && body.chart.result && body.chart.result[0];
     const quote = result && result.indicators && result.indicators.quote && result.indicators.quote[0];
     if (!result || !quote) return null;
+    const meta = result.meta || {};
     const times = result.timestamp || [];
     const closes = quote.close || [];
     const opens = quote.open || [];
@@ -633,20 +700,45 @@ class Component extends DCLogic {
       });
     }
     if (points.length < 2) return null;
-    return { source: 'COMEX HG=F', unit: 'USD per lb', range: '1y', points: points };
+    return {
+      source: 'COMEX ' + (meta.symbol || 'copper'),
+      contract: meta.symbol || '',
+      contractMonth: meta.shortName || '',
+      unit: 'USD per lb',
+      range: '1y',
+      points: points
+    };
   }
 
   async fetchHistory() {
-    const yahoo = 'https://query1.finance.yahoo.com/v8/finance/chart/HG%3DF?interval=1d&range=1y';
+    try {
+      const data = JSON.parse(await this.grab('/api/history?range=1y', 12000));
+      if (data && data.points && data.points.length >= 2) return data;
+    } catch (e) { /* CME or the chart host may be blocking the server */ }
+
+    let symbol = 'HGZ26.CMX';
+    let named = null;
+    try {
+      named = this.parseCmeQuote(await this.grab('https://r.jina.ai/' + CME_QUOTES, 12000));
+      if (named && named.yahoo) symbol = named.yahoo;
+    } catch (e) { /* keep the December 2026 contract, which is the active one */ }
+
+    const yahoo = 'https://query1.finance.yahoo.com/v8/finance/chart/' + encodeURIComponent(symbol) + '?interval=1d&range=1y';
     const tries = [
-      { url: '/api/history?range=1y', ms: 12000, parse: (t) => JSON.parse(t) },
-      { url: 'https://r.jina.ai/' + yahoo, ms: 15000, parse: (t) => this.historyFromYahoo(t) },
-      { url: 'https://api.allorigins.win/raw?url=' + encodeURIComponent(yahoo), ms: 15000, parse: (t) => this.historyFromYahoo(t) }
+      'https://r.jina.ai/' + yahoo,
+      'https://api.allorigins.win/raw?url=' + encodeURIComponent(yahoo)
     ];
-    for (const attempt of tries) {
+    for (const url of tries) {
       try {
-        const data = attempt.parse(await this.grab(attempt.url, attempt.ms));
-        if (data && data.points && data.points.length >= 2) return data;
+        const data = this.historyFromYahoo(await this.grab(url, 15000));
+        if (data && data.points && data.points.length >= 2) {
+          if (named && named.quoteCode) {
+            data.contract = named.quoteCode;
+            data.contractMonth = named.expirationMonth || data.contractMonth;
+            data.source = 'CME ' + named.quoteCode;
+          }
+          return data;
+        }
       } catch (e) { /* next source */ }
     }
     return null;
@@ -723,6 +815,24 @@ class Component extends DCLogic {
     this.setState({ comex: close.toFixed(4), comexDirty: true, comexStatus: 'manual' });
   }
 
+  peakIndex(points) {
+    let best = 0;
+    for (let i = 1; i < points.length; i++) {
+      const hi = points[i].high != null ? points[i].high : points[i].close;
+      const prev = points[best].high != null ? points[best].high : points[best].close;
+      if (hi > prev) best = i;
+    }
+    return best;
+  }
+
+  showPeak() {
+    const pts = this.windowPoints();
+    if (pts.length < 2) return;
+    const i = this.peakIndex(pts);
+    this._hoverI = i;
+    this.setState({ historyIndex: i });
+  }
+
   prettyDay(iso) {
     const parts = iso.split('-');
     const date = new Date(Date.UTC(+parts[0], +parts[1] - 1, +parts[2]));
@@ -736,20 +846,32 @@ class Component extends DCLogic {
   }
 
   copperCands() {
-    // COMEX front-month futures (HG=F) is the contract the sheet prices off — try it first.
+    // CME's quote board first. The active contract is the one with the most volume.
     return [
-      { src: 'COMEX HG=F', ms: 15000, url: 'https://r.jina.ai/' + YQ, parse: yahooParse },
-      { src: 'COMEX HG=F', ms: 12000, url: 'https://api.allorigins.win/raw?url=' + encodeURIComponent(YQ), parse: yahooParse },
-      { src: 'COMEX HG=F', ms: 12000, url: 'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(YQ), parse: yahooParse },
-      { src: 'COMEX HG.F · Stooq', ms: 8000, url: 'https://stooq.com/q/l/?s=hg.f&f=sd2t2ohlcv&h&e=csv', parse: (t) => {
-        const lines = t.trim().split(/\r?\n/);
-        if (lines.length < 2) return null;
-        return parseFloat(lines[1].split(',')[6]);
-      } },
-      { src: 'spot (indicative)', ms: 8000, url: 'https://api.gold-api.com/price/HG', parse: (t) => {
+      { src: 'CME', ms: 10000, url: '/api/copper', parse: (t) => {
         const j = JSON.parse(t);
-        this._cuAt = j.updatedAt || null;
+        if (!j || typeof j.price !== 'number') return null;
+        this._cuContract = j.contract || '';
+        this._cuMonth = j.contractMonth || '';
+        this._cuDelay = j.delay || '';
+        this._cuSrc = j.source || 'CME';
         return j.price;
+      } },
+      { src: 'CME', ms: 12000, url: 'https://r.jina.ai/' + CME_QUOTES, parse: (t) => {
+        const q = this.parseCmeQuote(t);
+        if (!q) return null;
+        this._cuContract = q.quoteCode;
+        this._cuMonth = q.expirationMonth;
+        this._cuDelay = q.delay || '10 minutes';
+        this._cuSrc = 'CME ' + q.quoteCode;
+        return q.price;
+      } },
+      { src: 'COMEX HGZ26.CMX', ms: 12000, url: 'https://r.jina.ai/https://query1.finance.yahoo.com/v8/finance/chart/HGZ26.CMX?interval=1d&range=5d', parse: (t) => {
+        this._cuContract = 'HGZ26.CMX';
+        this._cuMonth = 'Copper Dec 26';
+        this._cuDelay = '';
+        this._cuSrc = 'COMEX HGZ26.CMX';
+        return yahooParse(t);
       } }
     ];
   }
@@ -765,6 +887,10 @@ class Component extends DCLogic {
   async refreshAll() {
     this.setState({ busy: true, comexStatus: 'loading', fxStatus: 'loading' });
     this._cuAt = null;
+    this._cuContract = '';
+    this._cuMonth = '';
+    this._cuDelay = '';
+    this._cuSrc = '';
     this.loadHistory();
     const [cu, fx] = await Promise.all([this.chain(this.copperCands()), this.chain(this.fxCands())]);
     const at = this._cuAt ? new Date(this._cuAt) : new Date();
@@ -772,7 +898,9 @@ class Component extends DCLogic {
     const next = { busy: false, stamp };
     if (cu) {
       next.comexStatus = 'live';
-      next.comexSrc = cu.src;
+      next.comexSrc = this._cuSrc || cu.src;
+      next.comexContract = this._cuContract || '';
+      next.comexMonth = this._cuMonth || '';
       if (!this.state.comexDirty) next.comex = cu.value.toFixed(4);
     } else {
       next.comexStatus = this.state.comex ? 'manual' : 'error';
@@ -867,14 +995,16 @@ class Component extends DCLogic {
       historyUp: false, historyDown: false, historyFlat: false,
       rangeOpts: rangeOpts,
       historyDayTitle: '', historyDayClose: '', historyDayOpen: '', historyDayHigh: '', historyDayLow: '',
+      historyPeak: '', historyPeakDay: '',
       historyAxisHigh: '', historyAxisMid: '', historyAxisLow: '',
       guideHigh: '14', guideMid: '110', guideLow: '200',
-      cursorX: '8', cursorY: '110',
+      cursorX: '8', cursorY: '110', peakX: '8', peakY: '14',
       historyIndex: '0', historyLastIndex: '0',
       historyRows: [],
       onChartMove: (e) => this.onChartMove(e),
       onChartScrub: (e) => this.onChartScrub(e),
-      onUseChartClose: () => this.useChartClose()
+      onUseChartClose: () => this.useChartClose(),
+      onShowPeak: () => this.showPeak()
     };
     const pts = this.windowPoints();
     if (s.historyStatus !== 'ready' || pts.length < 2) return blank;
@@ -893,14 +1023,20 @@ class Component extends DCLogic {
     const high = day.high != null ? day.high : day.close;
     const low = day.low != null ? day.low : day.close;
     const spanName = { '1M': '1 month', '3M': '3 months', '6M': '6 months', '1Y': '1 year' }[s.historySpan] || '1 year';
+    const h = s.history || {};
+    const contractLabel = h.contractMonth || h.contract || 'COMEX';
+    const peakAt = this.peakIndex(pts);
+    const peak = pts[peakAt];
+    const peakHigh = peak.high != null ? peak.high : peak.close;
+    const sessionLow = Math.min.apply(null, pts.map((p) => p.low != null ? p.low : p.close));
     return {
-      historyRange: this.prettyDay(first.t) + ' to ' + this.prettyDay(last.t) + ' · ' + pts.length + ' sessions · HG=F · USD per lb',
+      historyRange: contractLabel + ' · ' + this.prettyDay(first.t) + ' to ' + this.prettyDay(last.t) + ' · ' + pts.length + ' sessions · USD per lb',
       historyChange: sign + '$' + Math.abs(change).toFixed(4) + ' / lb',
       historyPct: sign + Math.abs(changePct).toFixed(1) + '%',
-      historyAria: 'COMEX copper from ' + this.prettyDay(first.t) + ' to ' + this.prettyDay(last.t) + '. Selected ' + this.prettyDayLong(day.t) + ' close $' + day.close.toFixed(4),
+      historyAria: 'COMEX copper from ' + this.prettyDay(first.t) + ' to ' + this.prettyDay(last.t) + '. Selected ' + this.prettyDayLong(day.t) + ' close $' + day.close.toFixed(4) + '. Session high $' + peakHigh.toFixed(4) + ' on ' + this.prettyDay(peak.t),
       historyStartLabel: this.prettyDay(first.t),
       historyEndLabel: this.prettyDay(last.t),
-      historySpan: 'Session low $' + Math.min.apply(null, pts.map((p) => p.low != null ? p.low : p.close)).toFixed(4) + ' · session high $' + Math.max.apply(null, pts.map((p) => p.high != null ? p.high : p.close)).toFixed(4) + ' across ' + spanName + '. Move on the chart or use the slider to read a day. The quote keeps the live COMEX field until you use a close.',
+      historySpan: 'Session low $' + sessionLow.toFixed(4) + ' · session high $' + peakHigh.toFixed(4) + ' on ' + this.prettyDay(peak.t) + ' across ' + spanName + '. The line is the close. The shaded band is that day’s high and low, so a spike above the close still shows. The quote keeps the live COMEX field until you use a close.',
       historyLine: geo.line,
       historyArea: geo.area,
       historyBand: geo.band,
@@ -916,6 +1052,8 @@ class Component extends DCLogic {
       historyDayOpen: '$' + open.toFixed(4),
       historyDayHigh: '$' + high.toFixed(4),
       historyDayLow: '$' + low.toFixed(4),
+      historyPeak: '$' + peakHigh.toFixed(4),
+      historyPeakDay: this.prettyDayLong(peak.t),
       historyAxisHigh: '$' + geo.max.toFixed(2),
       historyAxisMid: '$' + ((geo.max + geo.min) / 2).toFixed(2),
       historyAxisLow: '$' + geo.min.toFixed(2),
@@ -924,6 +1062,8 @@ class Component extends DCLogic {
       guideLow: geo.yOf(geo.min).toFixed(1),
       cursorX: geo.xOf(idx).toFixed(1),
       cursorY: geo.yOf(day.close).toFixed(1),
+      peakX: geo.xOf(peakAt).toFixed(1),
+      peakY: geo.yOf(peakHigh).toFixed(1),
       historyIndex: String(idx),
       historyLastIndex: String(pts.length - 1),
       historyRows: pts.map((p, i) => ({
@@ -937,7 +1077,8 @@ class Component extends DCLogic {
       })).reverse(),
       onChartMove: (e) => this.onChartMove(e),
       onChartScrub: (e) => this.onChartScrub(e),
-      onUseChartClose: () => this.useChartClose()
+      onUseChartClose: () => this.useChartClose(),
+      onShowPeak: () => this.showPeak()
     };
   }
 
@@ -947,9 +1088,10 @@ class Component extends DCLogic {
     const dots = { live: '#3301F9', loading: '#DC8F63', manual: '#A75839', error: '#472B22', idle: 'rgba(15,31,44,.3)' };
 
     const comexNote = s.comexStatus === 'live'
-      ? (s.comexSrc === 'spot (indicative)'
-          ? 'Indicative price · ' + s.stamp + ' — verify against Comex Live'
-          : 'Live · updated ' + s.stamp)
+      ? ((s.comexContract ? s.comexContract : 'COMEX')
+          + (s.comexMonth ? ' · ' + s.comexMonth : '')
+          + (s.comexSrc && s.comexSrc.indexOf('CME') === 0 && s.comexSrc.indexOf('10') < 0 ? ' · CME 10 min delay' : '')
+          + ' · ' + s.stamp)
       : s.comexStatus === 'loading' ? 'Updating…'
       : s.comexStatus === 'error' ? 'Live price unavailable — enter value manually'
       : s.comexDirty ? 'Manual override' : 'Awaiting value';
@@ -997,6 +1139,7 @@ class Component extends DCLogic {
       comexNote, fxNote,
       statusDot: dots[s.comexStatus] || dots.idle,
       fxDot: dots[s.fxStatus] || dots.idle,
+      tickerKicker: s.comexContract ? ('COMEX ' + s.comexContract) : 'COMEX Copper',
       tickerLabel: c.comex ? '$' + c.comex.toFixed(4) + ' / lb' : '—',
       refreshGlyph: s.busy ? '·' : '↻',
       onRefresh: () => this.refreshAll(),

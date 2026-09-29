@@ -1,6 +1,6 @@
 # CBC Roofing Copper Pricing Tool
 
-The quote math lives in the script at the bottom of `index.html`. The `RATES` block at the top of that script is where fabrication, freight, lead-coating, and the EU tariff are set. The 3-month chart does not change a quote.
+The quote math lives in the script at the bottom of `index.html`. The `RATES` block at the top of that script is where fabrication, freight, lead-coating, and the EU tariff are set. The chart under the quote does not change a quote until someone uses a day’s close.
 
 ## Layout
 
@@ -20,9 +20,9 @@ Pushes to `main` on https://github.com/ShivMehra1/CBC_CopperPriceCal deploy this
 
 ## Market data
 
-`api/copper.js` reads the live copper price from comexlive.org/copper/, then falls back to the COMEX front-month futures quote (HG=F). The page also tries those public feeds directly. Both the COMEX and FX fields stay editable, so a quote can still be finished by hand.
+`api/copper.js` reads CME Group’s public copper quote board (COMEX HG, 10 minutes delayed) and uses the contract with the most volume. If that board is blocked, it falls back to the same contract’s last trade. The page tries the board directly as well. Both the COMEX and FX fields stay editable, so a quote can still be finished by hand.
 
-`api/history.js` loads a year of daily HG=F bars for the chart under the quote. The page can filter that year to 1 month, 3 months, 6 months, or the full year, and read open, high, low, and close for any session. `?range=1y` is the default. `1mo`, `3mo`, `6mo`, and `2y` are also accepted.
+`api/history.js` names that same active contract, then loads a year of its daily open, high, low, and close. The page can filter that year to 1 month, 3 months, 6 months, or the full year. `?range=1y` is the default. `1mo`, `3mo`, `6mo`, and `2y` are also accepted. Session highs are part of each bar, so a day that traded near $6.90 shows even when the close settled lower. CME’s own settlement report for December 2026 on Sep 22, 2026 has a high of 6.9285. The continuous HG=F series does not.
 
 Open these after a deploy:
 
@@ -30,6 +30,6 @@ Open these after a deploy:
     https://cbcroofingcopper.vercel.app/api/fx
     https://cbcroofingcopper.vercel.app/api/history
 
-`/api/copper` should report `"source": "comexlive.org"` when that page can be read, or `"source": "comex-futures"` when the fallback is in use. `/api/history` should report `"source": "COMEX HG=F"` and a `points` array.
+`/api/copper` should report `"source": "CME HGZ6"` (or whichever contract is most active) plus `contract` and `contractMonth`. `/api/history` should report that same contract and a `points` array whose `high` reaches the session spike.
 
 Prices refresh on their own every 3 minutes. The live copper response is cached for 60 seconds, FX for 10 minutes, and the chart for 1 hour.

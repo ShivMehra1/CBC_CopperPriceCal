@@ -1,121 +1,106 @@
-// Live COMEX copper price for the CBC pricing tool.
+// Live COMEX copper for the CBC pricing tool.
 //
-// Primary source is comexlive.org/copper/ (the page the pricing sheet references).
-// Runs server-side on Vercel, so there is no CORS restriction and no third-party
-// proxy in the path. A CME/COMEX futures feed is kept as a fallback so the tool
-// keeps working if the page layout ever changes.
+// Primary source is CME Group's public copper quote board (product HG, 438),
+// 10 minutes delayed. The price is the contract with the most volume that day,
+// which is the active copper future the sheet is meant to follow.
+// If CME blocks the server, the same contract's last trade is read from its
+// COMEX daily chart. The quote field stays editable either way.
 
-const PRIMARY = 'https://comexlive.org/copper/';
-const FALLBACKS = [
-  'https://query1.finance.yahoo.com/v8/finance/chart/HG%3DF?interval=1d&range=5d',
-  'https://query2.finance.yahoo.com/v8/finance/chart/HG%3DF?interval=1d&range=5d'
-];
+const { QUOTES_URL, parseCmeQuotes, plausible } = require('./cme');
 
 const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 ' +
   '(KHTML, like Gecko) Chrome/122.0 Safari/537.36';
+const JINA = 'https://r.jina.ai/' + QUOTES_URL;
 
-// Copper trades in single-digit USD per lb. Anything outside this band is a bad
-// parse, not a price — reject it rather than quote from it.
-const MIN = 0.5;
-const MAX = 50;
-const plausible = (n) => typeof n === 'number' && isFinite(n) && n > MIN && n < MAX;
-
-function toText(html) {
-  return html
-    .replace(/<script[\s\S]*?<\/script>/gi, ' ')
-    .replace(/<style[\s\S]*?<\/style>/gi, ' ')
-    .replace(/<[^>]+>/g, ' ')
-    .replace(/&nbsp;|&#160;/gi, ' ')
-    .replace(/&amp;/gi, '&')
-    .replace(/\s+/g, ' ');
-}
-
-// comexlive quotes copper to 4 decimals (e.g. 6.4675). Prefer a 4-decimal number
-// that sits just after a "Last Trade" heading; fall back to the COPPER row of the
-// commodities table.
-function scrapePrice(html) {
-  const text = toText(html);
-  const attempts = [];
-
-  // Collect every candidate near each label — not just the first — so a decoy
-  // like the change column ("-0.0250") cannot shadow the real price.
-  const collect = (segment) => {
-    const four = segment.match(/\b\d{1,2}\.\d{4}\b/g) || [];
-    const loose = segment.match(/\b\d{1,2}\.\d{2,4}\b/g) || [];
-    for (const n of four.concat(loose)) attempts.push(parseFloat(n));
-  };
-
-  const labels = [/Last\s*Trade/gi, /\bCOPPER\b/g];
-  for (const re of labels) {
-    let m;
-    while ((m = re.exec(text)) !== null) collect(text.slice(m.index, m.index + 300));
-  }
-
-  // Last resort: any plausible 4-decimal number on the page.
-  collect(text);
-
-  for (const value of attempts) {
-    if (plausible(value)) return value;
-  }
-  return null;
-}
-
-async function fromComexLive() {
-  const upstream = await fetch(PRIMARY, {
-    headers: {
-      'User-Agent': UA,
-      'Accept': 'text/html,application/xhtml+xml',
-      'Accept-Language': 'en-US,en;q=0.9'
-    }
+async function fetchText(url, ms) {
+  const upstream = await fetch(url, {
+    headers: { 'User-Agent': UA, 'Accept': 'application/json,text/plain,*/*' },
+    signal: AbortSignal.timeout(ms)
   });
-  if (!upstream.ok) throw new Error('comexlive HTTP ' + upstream.status);
+  if (!upstream.ok) throw new Error('HTTP ' + upstream.status);
+  return upstream.text();
+}
 
-  const price = scrapePrice(await upstream.text());
-  if (!plausible(price)) throw new Error('comexlive price not found');
-
+function pack(quote, source) {
   return {
-    price: price,
-    updatedAt: new Date().toISOString(),
+    price: quote.price,
+    updatedAt: quote.updated || new Date().toISOString(),
     unit: 'USD per lb',
-    source: 'comexlive.org'
+    source: source,
+    contract: quote.quoteCode,
+    contractMonth: quote.expirationMonth,
+    delay: quote.delay || ''
   };
 }
 
-async function fromFutures() {
-  for (const url of FALLBACKS) {
+async function fromCme() {
+  let lastError = 'CME quote board did not respond';
+  for (const target of [
+    { url: QUOTES_URL, ms: 5000 },
+    { url: JINA, ms: 8000 }
+  ]) {
     try {
-      const upstream = await fetch(url, { headers: { 'User-Agent': UA } });
-      if (!upstream.ok) continue;
+      const quote = parseCmeQuotes(await fetchText(target.url, target.ms));
+      if (!quote) {
+        lastError = 'CME copper quote was empty';
+        continue;
+      }
+      return pack(quote, 'CME ' + quote.quoteCode);
+    } catch (err) {
+      lastError = err.name === 'TimeoutError' ? 'CME timed out' : (err.message || 'CME fetch failed');
+    }
+  }
+  throw new Error(lastError);
+}
 
+async function fromContractChart(symbol) {
+  const urls = [
+    'https://query1.finance.yahoo.com/v8/finance/chart/' + encodeURIComponent(symbol) + '?interval=1d&range=5d',
+    'https://query2.finance.yahoo.com/v8/finance/chart/' + encodeURIComponent(symbol) + '?interval=1d&range=5d'
+  ];
+  let lastError = 'contract chart did not respond';
+  for (const url of urls) {
+    try {
+      const upstream = await fetch(url, {
+        headers: { 'User-Agent': UA, 'Accept': 'application/json' },
+        signal: AbortSignal.timeout(5000)
+      });
+      if (!upstream.ok) {
+        lastError = 'chart HTTP ' + upstream.status;
+        continue;
+      }
       const body = await upstream.json();
       const meta = body && body.chart && body.chart.result &&
         body.chart.result[0] && body.chart.result[0].meta;
-      if (!meta) continue;
-
-      const price = meta.regularMarketPrice != null ? meta.regularMarketPrice : meta.previousClose;
-      if (!plausible(price)) continue;
-
+      const price = meta && (meta.regularMarketPrice != null ? meta.regularMarketPrice : meta.previousClose);
+      if (!plausible(price)) {
+        lastError = 'chart price empty';
+        continue;
+      }
       return {
-        price: price,
+        price: +Number(price).toFixed(4),
         updatedAt: new Date((meta.regularMarketTime || Date.now() / 1000) * 1000).toISOString(),
         unit: 'USD per lb',
-        source: 'comex-futures'
+        source: 'COMEX ' + (meta.symbol || symbol),
+        contract: meta.symbol || symbol,
+        contractMonth: meta.shortName || '',
+        delay: ''
       };
     } catch (err) {
-      // try the next fallback
+      lastError = err.message || 'chart fetch failed';
     }
   }
-  throw new Error('no futures source responded');
+  throw new Error(lastError);
 }
 
 module.exports = async function handler(req, res) {
   try {
-    const result = await fromComexLive();
+    const result = await fromCme();
     res.setHeader('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300');
     return res.status(200).json(result);
   } catch (primaryErr) {
     try {
-      const result = await fromFutures();
+      const result = await fromContractChart('HGZ26.CMX');
       res.setHeader('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300');
       return res.status(200).json(result);
     } catch (fallbackErr) {
@@ -126,3 +111,6 @@ module.exports = async function handler(req, res) {
     }
   }
 };
+
+module.exports.fromCme = fromCme;
+module.exports.parseCmeQuotes = parseCmeQuotes;
