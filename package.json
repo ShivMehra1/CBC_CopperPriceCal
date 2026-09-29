@@ -1,0 +1,8 @@
+{
+  "name": "cbc-copper-price-cal",
+  "private": true,
+  "description": "CBC roofing copper pricing tool. Static page plus Vercel routes for the live price, FX, and the 3-month COMEX chart.",
+  "engines": {
+    "node": "24.x"
+  }
+}
