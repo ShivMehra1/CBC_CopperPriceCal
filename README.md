@@ -58,9 +58,8 @@ fallback is in use.
 
 - The COMEX and FX fields remain manually editable; typing in one overrides the
   live value for that session.
-- The header's two links open in new tabs, so an in-progress quote is never
-  lost: **Metal Pricing** → https://pricings-cbc.vercel.app and
-  **Outside Sales** → https://outsidesalescbc.vercel.app.
+- The header keeps the live COMEX ticker and refresh control. The Metal
+  Pricing and Outside Sales links are not part of this tool.
 - Fabrication rates, lead-coating costs, and the EU tariff are constants inside
   `index.html`. When those change, they need updating in the source, not here.
 - To re-generate `index.html` after design changes, re-bundle the source
