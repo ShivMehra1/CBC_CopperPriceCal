@@ -51,88 +51,92 @@
 </style>
 <style>
 *{box-sizing:border-box}
-html,body{margin:0;padding:0;background:#f4f3f1;color:#1c1917;-webkit-font-smoothing:antialiased}
-a{color:#1c1917;text-decoration:underline;text-underline-offset:2px}
+html,body{margin:0;padding:0;background:#F2EADD;color:#0F1F2C;-webkit-font-smoothing:antialiased}
+a{color:#A15839;text-decoration:underline;text-underline-offset:2px}
 button,input{font-family:'DM Sans',system-ui,sans-serif}
 input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{display:none;-webkit-appearance:none;appearance:none;width:0;margin:0}
 .page-shell{max-width:1040px;margin:0 auto;padding:28px 28px 64px}
-.topbar{display:flex;align-items:center;gap:18px;flex-wrap:wrap;padding-bottom:18px;border-bottom:1px solid #e4e0da}
-.topbar h1{margin:0;font-size:15px;font-weight:600;letter-spacing:0;color:#1c1917}
-.topbar .sub{margin-top:2px;font-size:12px;color:#78716c}
-.ticker{margin-left:auto;display:flex;align-items:center;gap:12px;padding:8px 10px 8px 12px;border:1px solid #e4e0da;background:#fff;border-radius:6px}
-.ticker .k{font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#78716c}
-.ticker .v{font-size:14px;font-weight:600;font-variant-numeric:tabular-nums}
+.topbar{display:flex;align-items:center;gap:18px;flex-wrap:wrap;padding-bottom:18px;border-bottom:1px solid rgba(15,31,44,.12)}
+.topbar h1{margin:0;font-family:'Doppio One',sans-serif;font-size:22px;font-weight:400;letter-spacing:1.5px;text-transform:uppercase;color:#0F1F2C}
+.topbar .sub{margin-top:2px;font-size:12px;font-weight:500;color:#835647}
+.ticker{margin-left:auto;display:flex;align-items:center;gap:12px;padding:8px 10px 8px 12px;border:1px solid rgba(15,31,44,.12);background:#fff;border-radius:6px}
+.ticker .k{font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#835647}
+.ticker .v{font-family:'Doppio One',sans-serif;font-size:18px;font-weight:400;font-variant-numeric:tabular-nums;color:#0F1F2C}
 .dot{width:6px;height:6px;border-radius:50%;flex:none}
-.icon-btn{width:28px;height:28px;border:1px solid #e4e0da;background:#fff;border-radius:4px;color:#44403c;cursor:pointer}
-.icon-btn:hover{border-color:#1c1917;color:#1c1917}
-.price-strip{margin-top:22px;padding:22px 22px 18px;background:#fff;border:1px solid #e4e0da;border-radius:8px}
+.icon-btn{width:28px;height:28px;border:1px solid rgba(15,31,44,.12);background:#fff;border-radius:4px;color:#472B22;cursor:pointer}
+.icon-btn:hover{border-color:#A15839;color:#A15839}
+.price-strip{margin-top:22px;padding:22px 22px 18px;background:#fff;border:1px solid rgba(15,31,44,.12);border-radius:8px}
 .price-row{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap}
 .price-aside{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.kicker{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#78716c}
-.price-num{margin-top:6px;font-size:64px;line-height:.9;font-weight:600;letter-spacing:-.035em;font-variant-numeric:tabular-nums}
-.price-meta{display:flex;align-items:center;gap:8px;margin-bottom:8px;color:#57534e;font-size:13px;font-weight:500}
+.kicker{font-family:'DM Sans',system-ui,sans-serif;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#835647}
+.price-num{margin-top:6px;font-family:'Doppio One',sans-serif;font-size:64px;line-height:.9;font-weight:400;letter-spacing:0;color:#0F1F2C;font-variant-numeric:tabular-nums}
+.price-meta{display:flex;align-items:center;gap:8px;margin-bottom:8px;color:#472B22;font-size:13px;font-weight:500}
 .delta{font-size:13px;font-weight:600;font-variant-numeric:tabular-nums}
-.delta.up{color:#3f6b4e}
-.delta.down{color:#9f1239}
-.text-btn{border:1px solid #e4e0da;background:#fff;border-radius:4px;padding:7px 11px;font-size:12px;font-weight:600;cursor:pointer;color:#1c1917}
-.text-btn:hover{border-color:#1c1917}
-.text-btn.solid{background:#1c1917;color:#fff;border-color:#1c1917}
+.delta.up{color:#A15839}
+.delta.down{color:#162E55}
+.text-btn{border:1px solid rgba(15,31,44,.16);background:#fff;border-radius:4px;padding:7px 11px;font-size:12px;font-weight:600;cursor:pointer;color:#0F1F2C}
+.text-btn:hover{border-color:#A15839;color:#A15839}
+.text-btn.solid{border:0;background:linear-gradient(90deg,#D68963,#A15839);color:#F2EADD;font-family:'Doppio One',sans-serif;font-weight:400;font-size:14px;letter-spacing:.04em;text-transform:uppercase}
+.text-btn.solid:hover{color:#fff}
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
-.pill{padding:4px 8px;border-radius:4px;background:#f4f3f1;color:#44403c;font-size:12px}
-.note,.quiet{margin-top:12px;font-size:12.5px;color:#78716c}
-.note{color:#9f1239}
-.tariff{margin-top:14px;display:flex;align-items:center;gap:10px;padding-top:12px;border-top:1px solid #eee;font-size:13px}
-.margin{margin-top:16px;padding-top:14px;border-top:1px solid #eee}
+.pill{padding:4px 8px;border-radius:4px;background:#F2EADD;color:#472B22;font-size:12px}
+.note,.quiet{margin-top:12px;font-size:12.5px;color:#835647}
+.note{color:#6b1b00}
+.tariff{margin-top:14px;display:flex;align-items:center;gap:10px;padding-top:12px;border-top:1px solid rgba(15,31,44,.1);font-size:13px;color:#162E55}
+.margin{margin-top:16px;padding-top:14px;border-top:1px solid rgba(15,31,44,.1)}
 .margin-top{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:10px}
-.margin b{font-weight:600;font-variant-numeric:tabular-nums}
+.margin b{font-family:'Doppio One',sans-serif;font-weight:400;font-size:26px;color:#A15839;font-variant-numeric:tabular-nums}
 .stepper{display:flex;align-items:center;gap:10px}
-.stepper button{width:28px;height:28px;border:1px solid #e4e0da;background:#fff;border-radius:4px;cursor:pointer;font-size:16px;line-height:1}
-.stepper button:hover{border-color:#1c1917}
-.stepper input{flex:1;accent-color:#1c1917}
-.fine{margin-top:14px;font-size:12px;line-height:1.5;color:#78716c}
+.stepper button{width:28px;height:28px;border:1px solid rgba(15,31,44,.16);background:#fff;border-radius:4px;cursor:pointer;font-size:16px;line-height:1;color:#0F1F2C}
+.stepper button:hover{border-color:#A15839;color:#A15839}
+.stepper input{flex:1;accent-color:#A15839}
+.fine{margin-top:14px;font-size:12px;line-height:1.5;color:#835647}
 .tool-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:14px;margin-top:14px;align-items:start}
-.card{background:#fff;border:1px solid #e4e0da;border-radius:8px;padding:18px 18px 16px}
-.card h2{margin:0 0 14px;font-size:13px;font-weight:600}
+.card{background:#fff;border:1px solid rgba(15,31,44,.12);border-radius:8px;padding:18px 18px 16px}
+.card h2,.chart-head h2{margin:0 0 14px;font-family:'Doppio One',sans-serif;font-size:18px;font-weight:400;letter-spacing:2px;text-transform:uppercase;color:#A15839}
 .fields{display:flex;flex-direction:column;gap:14px}
-.lab{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#78716c;margin-bottom:8px}
+.lab{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#835647;margin-bottom:8px}
 .row{display:flex;flex-wrap:wrap;gap:6px}
-.chip{padding:6px 11px;border-radius:4px;border:1px solid #e4e0da;background:#fff;color:#44403c;font-size:13px;font-weight:500;cursor:pointer}
-.chip:hover{border-color:#1c1917;color:#1c1917}
-.chip.on{background:#1c1917;border-color:#1c1917;color:#fff}
+.chip{padding:6px 11px;border-radius:4px;border:1px solid rgba(15,31,44,.14);background:#fff;color:#472B22;font-size:13px;font-weight:500;cursor:pointer}
+.chip:hover{border-color:#A15839;color:#A15839}
+.chip.on{background:#A15839;border-color:#A15839;color:#F2EADD}
 .chip.on:hover{color:#fff}
-.field{display:flex;align-items:center;border:1px solid #e4e0da;border-radius:6px;background:#fff;overflow:hidden}
-.field.off{background:#fafaf9;border-style:dashed}
-.field .affix{padding:0 0 0 12px;color:#a8a29e;font-weight:600}
-.field input{flex:1;min-width:0;border:0;background:transparent;padding:12px 10px;font-size:18px;font-weight:600;font-variant-numeric:tabular-nums;color:#1c1917;outline:none}
-.field.off input{color:#a8a29e}
-.field .unit{padding-right:12px;font-size:10px;font-weight:600;letter-spacing:.08em;color:#a8a29e}
-.hint{display:flex;align-items:center;gap:8px;margin-top:8px;font-size:12px;color:#78716c}
-.badge{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#78716c;border:1px solid #e4e0da;border-radius:4px;padding:2px 6px}
-.chart-card{margin-top:14px;background:#fff;border:1px solid #e4e0da;border-radius:8px;padding:18px 18px 14px}
+.field{display:flex;align-items:center;border:1px solid rgba(15,31,44,.16);border-radius:6px;background:#fff;overflow:hidden}
+.field.cu{border-color:rgba(161,88,57,.5)}
+.field.off{background:#F2EADD;border-style:dashed;border-color:rgba(15,31,44,.2)}
+.field .affix{padding:0 0 0 12px;color:#835647;font-weight:600}
+.field.cu .affix{color:#A15839}
+.field.off .affix{color:#835647}
+.field input{flex:1;min-width:0;border:0;background:transparent;padding:12px 10px;font-size:18px;font-weight:500;font-variant-numeric:tabular-nums;color:#0F1F2C;outline:none}
+.field.off input{color:#835647}
+.field .unit{padding-right:12px;font-size:10px;font-weight:600;letter-spacing:.08em;color:#835647}
+.hint{display:flex;align-items:center;gap:8px;margin-top:8px;font-size:12px;color:#835647}
+.badge{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#835647;border:1px solid rgba(15,31,44,.14);border-radius:4px;padding:2px 6px}
+.chart-card{margin-top:14px;background:#fff;border:1px solid rgba(15,31,44,.12);border-radius:8px;padding:18px 18px 14px}
 .chart-head{display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap}
-.chart-head h2{margin:0;font-size:13px;font-weight:600}
-.chart-head .sub{margin-top:3px;font-size:12px;color:#78716c}
-.chart-change{margin-top:10px;font-size:13px;font-weight:600;font-variant-numeric:tabular-nums;color:#44403c}
-.chart-change.up{color:#3f6b4e}
-.chart-change.down{color:#9f1239}
-.session{margin-top:14px;display:flex;flex-wrap:wrap;gap:10px 16px;align-items:flex-end;justify-content:space-between;padding-top:12px;border-top:1px solid #eee}
-.session .day{font-size:16px;font-weight:600}
-.session .close{margin-top:2px;font-size:13px;font-variant-numeric:tabular-nums;color:#57534e}
+.chart-head h2{margin:0}
+.chart-head .sub{margin-top:3px;font-size:12px;color:#835647}
+.chart-change{margin-top:10px;font-size:13px;font-weight:600;font-variant-numeric:tabular-nums;color:#0F1F2C}
+.chart-change.up{color:#A15839}
+.chart-change.down{color:#162E55}
+.session{margin-top:14px;display:flex;flex-wrap:wrap;gap:10px 16px;align-items:flex-end;justify-content:space-between;padding-top:12px;border-top:1px solid rgba(15,31,44,.1)}
+.session .day{font-family:'Doppio One',sans-serif;font-size:22px;font-weight:400;color:#0F1F2C}
+.session .close{margin-top:2px;font-size:13px;font-variant-numeric:tabular-nums;color:#A15839}
 .ohlc{display:flex;flex-wrap:wrap;gap:6px}
-.ohlc span{padding:4px 8px;border:1px solid #eee;border-radius:4px;font-size:12px;font-variant-numeric:tabular-nums}
+.ohlc span{padding:4px 8px;border:1px solid rgba(15,31,44,.1);border-radius:4px;font-size:12px;font-variant-numeric:tabular-nums;color:#0F1F2C}
 .plot{margin-top:8px;display:flex;gap:8px}
-.axis{width:52px;flex:none;display:flex;flex-direction:column;justify-content:space-between;padding:6px 0 18px;font-size:10px;font-variant-numeric:tabular-nums;color:#a8a29e;text-align:right}
+.axis{width:52px;flex:none;display:flex;flex-direction:column;justify-content:space-between;padding:6px 0 18px;font-size:10px;font-variant-numeric:tabular-nums;color:#835647;text-align:right}
 .plot-body{flex:1;min-width:0}
-.plot-body input[type=range]{width:100%;margin-top:2px;accent-color:#1c1917}
-.axis-labels{display:flex;justify-content:space-between;margin-top:2px;font-size:11px;color:#a8a29e}
-.caption{margin-top:8px;font-size:12px;line-height:1.45;color:#78716c}
-.table{margin-top:14px;border-top:1px solid #eee}
+.plot-body input[type=range]{width:100%;margin-top:2px;accent-color:#A15839}
+.axis-labels{display:flex;justify-content:space-between;margin-top:2px;font-size:11px;color:#835647}
+.caption{margin-top:8px;font-size:12px;line-height:1.45;color:#835647}
+.table{margin-top:14px;border-top:1px solid rgba(15,31,44,.1)}
 .thead,.trow{display:grid;grid-template-columns:1.6fr repeat(4,1fr);gap:8px}
-.thead{padding:8px 2px;font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#a8a29e}
+.thead{padding:8px 2px;font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#835647}
 .thead span:first-child,.trow span:first-child{text-align:left}
 .thead span:not(:first-child),.trow span:not(:first-child){text-align:right}
 .scroll{max-height:220px;overflow:auto}
-.foot{margin-top:22px;font-size:11px;letter-spacing:.08em;color:#a8a29e;text-align:center}
+.foot{margin-top:22px;font-size:11px;letter-spacing:.08em;color:#835647;text-align:center}
 @media (max-width:800px){
   .page-shell{padding:16px 14px 40px !important}
   .tool-grid{grid-template-columns:1fr !important}
@@ -143,7 +147,7 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
 </style>
 </helmet>
 
-<div style="min-height:100vh;background:#f4f3f1;font-family:'DM Sans',system-ui,sans-serif;color:#1c1917">
+<div style="min-height:100vh;background:#F2EADD;font-family:'DM Sans',system-ui,sans-serif;font-weight:500;color:#0F1F2C">
   <div class="page-shell">
 
     <header class="topbar">
@@ -314,7 +318,7 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
           <div>
             <div class="lab">COMEX, USD per lb</div>
             <div class="quiet" style="margin-top:-4px;margin-bottom:8px">Check the print on <a href="https://www.cmegroup.com/markets/metals/base/copper.quotes.html" target="_blank" rel="noopener">CME Group</a></div>
-            <div class="field">
+            <div class="field cu">
               <span class="affix">$</span>
               <input type="text" sc-camel-input-mode="decimal" placeholder="0.0000" value="{{ comexValue }}" sc-camel-on-change="{{ onComex }}">
               <span class="unit">/ LB</span>
@@ -372,13 +376,13 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
           </div>
           <div class="plot-body">
             <svg sc-camel-view-box="0 0 640 220" role="img" aria-label="{{ historyAria }}" sc-camel-on-mouse-move="{{ onChartMove }}" sc-camel-on-touch-move="{{ onChartMove }}" style="width:100%;height:auto;display:block;touch-action:pan-y;cursor:crosshair">
-              <line sc-camel-x1="8" sc-camel-x2="632" sc-camel-y1="{{ guideHigh }}" sc-camel-y2="{{ guideHigh }}" style="stroke:rgba(28,25,23,.08);stroke-width:.6"></line>
-              <line sc-camel-x1="8" sc-camel-x2="632" sc-camel-y1="{{ guideMid }}" sc-camel-y2="{{ guideMid }}" style="stroke:rgba(28,25,23,.08);stroke-width:.6"></line>
-              <line sc-camel-x1="8" sc-camel-x2="632" sc-camel-y1="{{ guideLow }}" sc-camel-y2="{{ guideLow }}" style="stroke:rgba(28,25,23,.08);stroke-width:.6"></line>
-              <polygon points="{{ historyBand }}" style="fill:rgba(28,25,23,.045);stroke:none"></polygon>
-              <polyline points="{{ historyLine }}" style="fill:none;stroke:#1c1917;stroke-width:1.15;stroke-linejoin:round;stroke-linecap:round"></polyline>
-              <line sc-camel-x1="{{ cursorX }}" sc-camel-x2="{{ cursorX }}" sc-camel-y1="12" sc-camel-y2="200" style="stroke:rgba(28,25,23,.35);stroke-width:.75"></line>
-              <circle sc-camel-cx="{{ cursorX }}" sc-camel-cy="{{ cursorY }}" r="3" style="fill:#1c1917;stroke:#fff;stroke-width:1"></circle>
+              <line sc-camel-x1="8" sc-camel-x2="632" sc-camel-y1="{{ guideHigh }}" sc-camel-y2="{{ guideHigh }}" style="stroke:rgba(15,31,44,.08);stroke-width:.6"></line>
+              <line sc-camel-x1="8" sc-camel-x2="632" sc-camel-y1="{{ guideMid }}" sc-camel-y2="{{ guideMid }}" style="stroke:rgba(15,31,44,.08);stroke-width:.6"></line>
+              <line sc-camel-x1="8" sc-camel-x2="632" sc-camel-y1="{{ guideLow }}" sc-camel-y2="{{ guideLow }}" style="stroke:rgba(15,31,44,.08);stroke-width:.6"></line>
+              <polygon points="{{ historyBand }}" style="fill:rgba(161,88,57,.12);stroke:none"></polygon>
+              <polyline points="{{ historyLine }}" style="fill:none;stroke:#A15839;stroke-width:1.15;stroke-linejoin:round;stroke-linecap:round"></polyline>
+              <line sc-camel-x1="{{ cursorX }}" sc-camel-x2="{{ cursorX }}" sc-camel-y1="12" sc-camel-y2="200" style="stroke:rgba(15,31,44,.35);stroke-width:.75"></line>
+              <circle sc-camel-cx="{{ cursorX }}" sc-camel-cy="{{ cursorY }}" r="3" style="fill:#A15839;stroke:#fff;stroke-width:1"></circle>
             </svg>
             <input type="range" min="0" max="{{ historyLastIndex }}" step="1" value="{{ historyIndex }}" sc-camel-on-input="{{ onChartScrub }}" aria-label="Choose a trading day">
           </div>
@@ -946,9 +950,9 @@ class Component extends DCLogic {
       off: s.historySpan !== r.id,
       pick: () => { this._hoverI = null; this.setState({ historySpan: r.id, historyIndex: -1 }); }
     }));
-    const rowStyle = (on) => 'display:grid;grid-template-columns:1.6fr repeat(4,1fr);gap:8px;width:100%;padding:8px 2px;border:0;border-bottom:1px solid #eee;background:'
-      + (on ? '#f4f3f1' : 'transparent')
-      + ';color:#1c1917;font:500 12.5px/1.35 "DM Sans",system-ui,sans-serif;font-variant-numeric:tabular-nums;text-align:right;cursor:pointer';
+    const rowStyle = (on) => 'display:grid;grid-template-columns:1.6fr repeat(4,1fr);gap:8px;width:100%;padding:8px 2px;border:0;border-bottom:1px solid rgba(15,31,44,.08);background:'
+      + (on ? '#F2EADD' : 'transparent')
+      + ';color:#0F1F2C;font:500 12.5px/1.35 "DM Sans",system-ui,sans-serif;font-variant-numeric:tabular-nums;text-align:right;cursor:pointer';
     const blank = {
       historyRange: 'Daily COMEX front-month sessions (HG=F), USD per lb',
       historyChange: '', historyPct: '', historyAria: 'COMEX copper over the past year',
@@ -1050,7 +1054,7 @@ class Component extends DCLogic {
   renderVals() {
     const s = this.state;
     const c = this.compute();
-    const dots = { live: '#3f6b4e', loading: '#a16207', manual: '#8d4e32', error: '#9f1239', idle: '#a8a29e' };
+    const dots = { live: '#A15839', loading: '#D68963', manual: '#472B22', error: '#6b1b00', idle: '#c1c1c1' };
 
     const comexNote = s.comexStatus === 'live'
       ? ((s.comexContract ? s.comexContract : 'COMEX')
