@@ -116,7 +116,7 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
 
           <div class="opt-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(184px,1fr));gap:20px 18px;align-content:start">
           <div>
-            <div style="font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:rgba(15,31,44,.68);margin-bottom:10px">Select Customer Currency</div>
+            <div style="font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:rgba(15,31,44,.68);margin-bottom:10px">Currency</div>
             <div style="display:flex;flex-wrap:wrap;gap:8px">
               <sc-for list="{{ currencyOpts }}" as="o" hint-placeholder-count="2">
                 <sc-if value="{{ o.on }}" hint-placeholder-val="{{ false }}">
@@ -130,7 +130,7 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
           </div>
 
           <div>
-            <div style="font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:rgba(15,31,44,.68);margin-bottom:10px">Select Material Origin</div>
+            <div style="font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:rgba(15,31,44,.68);margin-bottom:10px">Origin</div>
             <div style="display:flex;flex-wrap:wrap;gap:8px">
               <sc-for list="{{ originOpts }}" as="o" hint-placeholder-count="2">
                 <sc-if value="{{ o.on }}" hint-placeholder-val="{{ false }}">
@@ -144,7 +144,7 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
           </div>
 
           <div>
-            <div style="font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:rgba(15,31,44,.68);margin-bottom:10px">Select Material Finish</div>
+            <div style="font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:rgba(15,31,44,.68);margin-bottom:10px">Finish</div>
             <div style="display:flex;flex-wrap:wrap;gap:8px">
               <sc-for list="{{ finishOpts }}" as="o" hint-placeholder-count="2">
                 <sc-if value="{{ o.on }}" hint-placeholder-val="{{ false }}">
@@ -158,7 +158,7 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
           </div>
 
           <div>
-            <div style="font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:rgba(15,31,44,.68);margin-bottom:10px">Select Material Form</div>
+            <div style="font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:rgba(15,31,44,.68);margin-bottom:10px">Form</div>
             <div style="display:flex;flex-wrap:wrap;gap:8px">
               <sc-for list="{{ formOpts }}" as="o" hint-placeholder-count="2">
                 <sc-if value="{{ o.on }}" hint-placeholder-val="{{ false }}">
@@ -176,7 +176,7 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
           <div style="height:1px;background:linear-gradient(90deg,transparent,rgba(15,31,44,.13),transparent)"></div>
 
           <div>
-            <div style="font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:rgba(15,31,44,.68);margin-bottom:10px">Select Material Thickness</div>
+            <div style="font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:rgba(15,31,44,.68);margin-bottom:10px">Thickness</div>
             <div style="display:flex;flex-wrap:wrap;gap:8px">
               <sc-for list="{{ thicknessOpts }}" as="o" hint-placeholder-count="6">
                 <sc-if value="{{ o.on }}" hint-placeholder-val="{{ false }}">
@@ -190,7 +190,7 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
           </div>
 
           <div>
-            <div style="font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:rgba(15,31,44,.68);margin-bottom:10px">Select Material Width</div>
+            <div style="font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:rgba(15,31,44,.68);margin-bottom:10px">Width</div>
             <div style="display:flex;flex-wrap:wrap;gap:8px">
               <sc-for list="{{ widthOpts }}" as="o" hint-placeholder-count="4">
                 <sc-if value="{{ o.on }}" hint-placeholder-val="{{ false }}">
@@ -204,7 +204,7 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
           </div>
 
           <div>
-            <div style="font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:rgba(15,31,44,.68);margin-bottom:10px">Select Material Length</div>
+            <div style="font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:rgba(15,31,44,.68);margin-bottom:10px">Length</div>
             <div style="{{ lengthWrapStyle }}">
               <sc-for list="{{ lengthOpts }}" as="o" hint-placeholder-count="3">
                 <sc-if value="{{ o.on }}" hint-placeholder-val="{{ false }}">
@@ -228,7 +228,9 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
           </div>
 
           <div>
-            <div style="font-size:11.5px;font-weight:500;color:rgba(15,31,44,.68);margin-bottom:9px">Provided by AP via email</div>
+            <sc-if value="{{ fxHelp }}" hint-placeholder-val="{{ false }}">
+              <div style="font-size:11.5px;font-weight:500;color:rgba(15,31,44,.68);margin-bottom:9px">Provided by AP via email</div>
+            </sc-if>
             <div style="display:flex;align-items:center;gap:10px;margin-bottom:9px;flex-wrap:wrap">
               <span style="font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:rgba(15,31,44,.68)">1 US dollar buys</span>
               <sc-if value="{{ fxUnused }}" hint-placeholder-val="{{ false }}">
@@ -258,7 +260,9 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
           <div style="height:1px;background:linear-gradient(90deg,transparent,rgba(15,31,44,.13),transparent)"></div>
 
           <div>
-            <div style="font-size:11.5px;font-weight:500;color:rgba(15,31,44,.68);margin-bottom:9px">Check the print on <a href="https://www.cmegroup.com/markets/metals/base/copper.quotes.html" target="_blank" rel="noopener" style="color:#A75839;font-weight:700">CME Group copper quotes</a></div>
+            <sc-if value="{{ comexHelp }}" hint-placeholder-val="{{ false }}">
+              <div style="font-size:11.5px;font-weight:500;color:rgba(15,31,44,.68);margin-bottom:9px">Check the print on <a href="https://www.cmegroup.com/markets/metals/base/copper.quotes.html" target="_blank" rel="noopener" style="color:#A75839;font-weight:700">CME Group copper quotes</a></div>
+            </sc-if>
             <div style="font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:rgba(15,31,44,.68);margin-bottom:9px">Enter COMEX $USD</div>
             <div style="display:flex;align-items:center;border-radius:14px;background:#FFFFFF;border:1px solid rgba(167,88,57,.42);overflow:hidden;box-shadow:inset 0 2px 6px rgba(15,31,44,.06),0 0 0 3px rgba(220,143,99,.14)">
               <span style="padding:0 0 0 15px;font-size:19px;font-weight:600;color:#A75839;flex:none">$</span>
@@ -1204,6 +1208,8 @@ class Component extends DCLogic {
       onCopy: () => this.copyPrice(),
       fxUsed: s.currencyIdx === 1,
       fxUnused: s.currencyIdx === 2,
+      fxHelp: s.currencyIdx === 1 && s.fxStatus === 'error',
+      comexHelp: s.comexStatus === 'error',
       currencyCode: CURRENCIES[s.currencyIdx - 1],
       hasTariff: c.hasTariff,
       tariffAmount: '+$' + c.tariff.toFixed(2) + ' / lb',
