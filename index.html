@@ -406,7 +406,7 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
             <span>{{ historyAxisMid }}</span>
             <span>{{ historyAxisLow }}</span>
           </div>
-          <div style="flex:1;min-width:0">
+          <div style="position:relative;flex:1;min-width:0">
             <svg sc-camel-view-box="0 0 640 220" role="img" aria-label="{{ historyAria }}" sc-camel-on-pointer-down="{{ onChartDown }}" sc-camel-on-pointer-move="{{ onChartPoint }}" sc-camel-on-pointer-up="{{ onChartUp }}" sc-camel-on-pointer-leave="{{ onChartLeave }}" sc-camel-on-pointer-cancel="{{ onChartLeave }}" style="width:100%;max-width:100%;height:auto;display:block;touch-action:pan-y;cursor:crosshair">
               <line sc-camel-x1="8" sc-camel-x2="632" sc-camel-y1="{{ guideHigh }}" sc-camel-y2="{{ guideHigh }}" style="stroke:rgba(15,31,44,.08);stroke-width:1"></line>
               <line sc-camel-x1="8" sc-camel-x2="632" sc-camel-y1="{{ guideMid }}" sc-camel-y2="{{ guideMid }}" style="stroke:rgba(15,31,44,.08);stroke-width:1"></line>
@@ -417,6 +417,10 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
               <line sc-camel-x1="{{ cursorX }}" sc-camel-x2="{{ cursorX }}" sc-camel-y1="12" sc-camel-y2="200" style="{{ cursorLineStyle }}"></line>
               <circle sc-camel-cx="{{ cursorX }}" sc-camel-cy="{{ cursorY }}" r="4" style="{{ cursorDotStyle }}"></circle>
             </svg>
+            <div style="{{ cursorTagStyle }}">
+              <div style="font-size:10px;font-weight:600;letter-spacing:.02em;line-height:1.1;color:rgba(15,31,44,.55)">{{ cursorTagDate }}</div>
+              <div style="margin-top:2px;font-family:'Doppio One',sans-serif;font-size:16px;line-height:1;color:#A75839;font-variant-numeric:tabular-nums">{{ historyDayClose }}</div>
+            </div>
           </div>
         </div>
         <div style="display:flex;justify-content:space-between;gap:8px;margin-top:4px;font-size:11px;font-weight:600;color:rgba(15,31,44,.55)">
@@ -881,6 +885,14 @@ class Component extends DCLogic {
     return best;
   }
 
+  cursorTagStyle(x, y) {
+    const xPct = (x / 640 * 100).toFixed(2);
+    const yPct = (y / 220 * 100).toFixed(2);
+    const shiftX = x > 470 ? 'calc(-100% - 10px)' : x < 96 ? '10px' : '-50%';
+    const shiftY = y < 46 ? '12px' : 'calc(-100% - 12px)';
+    return 'position:absolute;left:' + xPct + '%;top:' + yPct + '%;transform:translate(' + shiftX + ',' + shiftY + ');z-index:2;pointer-events:none;padding:5px 8px 6px;border-radius:10px;background:rgba(255,255,255,.96);border:1px solid rgba(167,88,57,.34);box-shadow:0 10px 22px -14px rgba(15,31,44,.55);text-align:center;white-space:nowrap';
+  }
+
   prettyDay(iso) {
     const parts = iso.split('-');
     const date = new Date(Date.UTC(+parts[0], +parts[1] - 1, +parts[2]));
@@ -1063,6 +1075,8 @@ class Component extends DCLogic {
       cursorX: '8', cursorY: '110',
       cursorLineStyle: 'stroke:transparent;stroke-width:1',
       cursorDotStyle: 'fill:#A75839;stroke:#FFFFFF;stroke-width:1.5',
+      cursorTagDate: '',
+      cursorTagStyle: 'display:none',
       historyRows: [],
       onChartDown: (e) => this.onChartDown(e),
       onChartPoint: (e) => this.onChartPoint(e),
@@ -1125,6 +1139,8 @@ class Component extends DCLogic {
       cursorY: geo.yOf(day.close).toFixed(1),
       cursorLineStyle: hovering ? 'stroke:rgba(15,31,44,.35);stroke-width:1' : 'stroke:transparent;stroke-width:1',
       cursorDotStyle: 'fill:#A75839;stroke:#FFFFFF;stroke-width:1.5',
+      cursorTagDate: this.prettyDay(day.t).replace(/, \d{4}$/, ''),
+      cursorTagStyle: this.cursorTagStyle(geo.xOf(idx), geo.yOf(day.close)),
       historyRows: (s.historyAll ? pts.map((p, i) => i) : pts.map((p, i) => i).slice(-10)).reverse().map((i) => {
         const p = pts[i];
         return {
